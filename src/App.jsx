@@ -4,6 +4,8 @@ import Register from "./pages/register";
 import Agent from "./pages/agent";
 import Admin from "./pages/admin";
 import ProtectedRoute from "./ProtectedRoute";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 
 
@@ -56,6 +58,7 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
 
       </Routes>
+        <ToastContainer position="top-right" autoClose={3000} />
     </BrowserRouter>
   );
 }

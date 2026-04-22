@@ -74,7 +74,7 @@ export default function Register() {
             value={form.role}
           >
             <option value="SELECT">SELECT ROLE</option>
-            <option value="ADMIN">ADMIN</option>
+            {/* <option value="ADMIN">ADMIN</option> */}
             <option value="ORGANIZER">ORGANIZER</option>
           </select>
 

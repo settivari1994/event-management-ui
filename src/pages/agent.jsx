@@ -1,807 +1,577 @@
-// // import { useEffect, useState } from "react";
-// // import axios from "axios";
-// // import { useNavigate } from "react-router-dom";
-// // import {
-// //   LogOut,
-// //   MapPin,
-// //   IndianRupee,
-// //   Ticket,
-// //   CalendarDays
-// // } from "lucide-react";
-// // import { QRCodeCanvas } from "qrcode.react";
-
-// // export default function OrganizerDashboard() {
-
-// //   const [events, setEvents] = useState([]);
-// //   const [username, setUsername] = useState("");
-
-// //   const [showSellModal, setShowSellModal] = useState(false);
-// //   const [selectedEvent, setSelectedEvent] = useState(null);
-
-// //   const [booking, setBooking] = useState(null); // ✅ NEW
-
-// //   const [bookingData, setBookingData] = useState({
-// //     customerName: "",
-// //     customerPhone: "",
-// //     ticketCount: 1
-// //   });
-
-// //   const navigate = useNavigate();
-// //   const token = localStorage.getItem("token");
-
-// //   // ✅ LOAD EVENTS
-// //   const loadMyEvents = () => {
-// //     axios.get("http://localhost:8080/api/events/my-events", {
-// //       headers: {
-// //         Authorization: `Bearer ${token}`
-// //       }
-// //     })
-// //     .then(res => setEvents(res.data))
-// //     .catch(err => console.log(err));
-// //   };
-
-// //   // ✅ GET USERNAME FROM TOKEN
-// //   const getUsernameFromToken = () => {
-// //     try {
-// //       const payload = JSON.parse(atob(token.split(".")[1]));
-// //       setUsername(payload.sub);
-// //     } catch (e) {
-// //       console.log(e);
-// //     }
-// //   };
-
-// //   useEffect(() => {
-// //     loadMyEvents();
-// //     getUsernameFromToken();
-// //   }, []);
-
-// //   // ✅ LOGOUT
-// //   const handleLogout = () => {
-// //     localStorage.removeItem("token");
-// //     navigate("/");
-// //   };
-
-// //   // ✅ HANDLE BOOKING
-// //   const handleBooking = () => {
-
-// //     if (!bookingData.customerName || !bookingData.customerPhone) {
-// //       alert("Please fill all fields");
-// //       return;
-// //     }
-
-// //     const payload = {
-// //       eventId: selectedEvent.id,
-// //       customerName: bookingData.customerName,
-// //       customerPhone: bookingData.customerPhone,
-// //       ticketCount: Number(bookingData.ticketCount)
-// //     };
-
-// //     axios.post("http://localhost:8080/api/bookings", payload, {
-// //       headers: {
-// //         Authorization: `Bearer ${token}`
-// //       }
-// //     })
-// //     .then((res) => {
-// //       setBooking(res.data); // ✅ SHOW QR
-// //       alert("✅ Booking created. Ask customer to scan QR");
-// //     })
-// //     .catch(err => {
-// //       console.log(err);
-// //       alert("❌ Booking failed");
-// //     });
-// //   };
-
-// //   // ✅ CONFIRM PAYMENT
-// //   const confirmPayment = (bookingId) => {
-// //     axios.put(
-// //       `http://localhost:8080/api/bookings/${bookingId}/confirm`,
-// //       {},
-// //       {
-// //         headers: {
-// //           Authorization: `Bearer ${token}`
-// //         }
-// //       }
-// //     )
-// //     .then(res => {
-// //       setBooking(res.data);
-
-// //       alert("✅ Payment Successful");
-
-// //       setShowSellModal(false);
-// //       setBooking(null);
-
-// //       setBookingData({
-// //         customerName: "",
-// //         customerPhone: "",
-// //         ticketCount: 1
-// //       });
-
-// //       loadMyEvents();
-// //     })
-// //     .catch(err => {
-// //       console.log(err);
-// //       alert("❌ Payment failed");
-// //     });
-// //   };
-
-// //   return (
-// //     <div className="min-h-screen bg-gray-100 p-6">
-
-// //       {/* HEADER */}
-// //       <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow">
-// //         <h1 className="text-xl font-bold text-blue-600">
-// //           Welcome Organizer 👉 {username}
-// //         </h1>
-
-// //         <button
-// //           onClick={handleLogout}
-// //           className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-// //         >
-// //           <LogOut size={18} />
-// //           Logout
-// //         </button>
-// //       </div>
-
-// //       <p className="text-gray-500 mt-4">
-// //         Events assigned by admin will appear here.
-// //       </p>
-
-// //       {/* EVENTS */}
-// //       {events.length === 0 ? (
-// //         <p className="text-gray-400 mt-4">No events assigned yet.</p>
-// //       ) : (
-// //         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-
-// //           {events.map((e) => (
-// //             <div key={e.id} className="bg-white p-5 rounded-xl shadow">
-
-// //               <h2 className="text-lg font-bold text-blue-600">{e.name}</h2>
-
-// //               <div className="flex items-center gap-2 text-gray-600 mt-2">
-// //                 <MapPin size={16} /> {e.location}
-// //               </div>
-
-// //               <div className="flex items-center gap-2 text-gray-600 mt-1">
-// //                 <IndianRupee size={16} /> ₹ {e.price}
-// //               </div>
-
-// //               <div className="flex items-center gap-2 text-gray-600 mt-1">
-// //                 <Ticket size={16} /> Total: {e.totalTickets}
-// //               </div>
-
-// //               <div className="text-gray-500 text-sm mt-1">
-// //                 Available: {e.availableTickets}
-// //               </div>
-
-// //               <div className="flex items-center gap-2 text-gray-500 text-sm mt-2">
-// //                 <CalendarDays size={16} /> {e.eventDate}
-// //               </div>
-
-// //               <button
-// //                 onClick={() => {
-// //                   setSelectedEvent(e);
-// //                   setShowSellModal(true);
-// //                   setBooking(null); // reset
-// //                 }}
-// //                 className="mt-4 w-full bg-blue-600 text-white py-2 rounded"
-// //               >
-// //                 Sell Ticket
-// //               </button>
-
-// //             </div>
-// //           ))}
-// //         </div>
-// //       )}
-
-// //       {/* MODAL */}
-// //       {showSellModal && (
-// //         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center">
-
-// //           <div className="bg-white p-6 rounded-xl w-[350px] shadow-lg">
-
-// //             <h2 className="text-lg font-bold mb-4 text-blue-600">
-// //               Sell Ticket - {selectedEvent?.name}
-// //             </h2>
-
-// //             {/* FORM */}
-// //             {!booking && (
-// //               <>
-// //                 <input
-// //                   type="text"
-// //                   placeholder="Customer Name"
-// //                   className="w-full border p-2 mb-3 rounded"
-// //                   value={bookingData.customerName}
-// //                   onChange={(e) =>
-// //                     setBookingData({ ...bookingData, customerName: e.target.value })
-// //                   }
-// //                 />
-
-// //                 <input
-// //                   type="text"
-// //                   placeholder="Phone Number"
-// //                   className="w-full border p-2 mb-3 rounded"
-// //                   value={bookingData.customerPhone}
-// //                   onChange={(e) =>
-// //                     setBookingData({ ...bookingData, customerPhone: e.target.value })
-// //                   }
-// //                 />
-
-// //                 <input
-// //                   type="number"
-// //                   className="w-full border p-2 mb-3 rounded"
-// //                   value={bookingData.ticketCount}
-// //                   onChange={(e) =>
-// //                     setBookingData({ ...bookingData, ticketCount: e.target.value })
-// //                   }
-// //                 />
-
-// //                 <div className="flex justify-between">
-// //                   <button
-// //                     onClick={() => setShowSellModal(false)}
-// //                     className="bg-gray-400 text-white px-4 py-2 rounded"
-// //                   >
-// //                     Cancel
-// //                   </button>
-
-// //                   <button
-// //                     onClick={handleBooking}
-// //                     className="bg-green-600 text-white px-4 py-2 rounded"
-// //                   >
-// //                     Confirm
-// //                   </button>
-// //                 </div>
-// //               </>
-// //             )}
-
-// //             {/* QR SECTION */}
-// //             {booking && (
-// //               <div className="text-center">
-
-// //                 <h3 className="font-bold text-green-600 mb-2">
-// //                   Scan to Pay
-// //                 </h3>
-
-// //                 <QRCodeCanvas
-// //                   value={`upi://pay?pa=9494901647@ybl&pn=EventApp&am=${booking.totalPrice}&cu=INR&tn=BOOKING_${booking.id}`}
-// //                   size={200}
-// //                 />
-
-// //                 <p className="mt-2">₹ {booking.totalPrice}</p>
-
-// //                 <button
-// //                   onClick={() => confirmPayment(booking.id)}
-// //                   className="mt-4 w-full bg-green-600 text-white py-2 rounded"
-// //                 >
-// //                   Confirm Payment
-// //                 </button>
-
-// //               </div>
-// //             )}
-
-// //           </div>
-// //         </div>
-// //       )}
-
-// //     </div>
-// //   );
-// // }
-
-
-// import { useEffect, useState } from "react";
+// import React, { useEffect, useState } from "react";
 // import axios from "axios";
-// import { useNavigate } from "react-router-dom";
+// import { toast } from "react-toastify";
+// import { QRCodeCanvas } from "qrcode.react"; // ✅ UPDATED
 // import {
-//   LogOut,
+//   CalendarDays,
 //   MapPin,
-//   IndianRupee,
-//   Ticket,
-//   CalendarDays
+//   FileText,
+//   LogOut,
+//   X,
 // } from "lucide-react";
-// import { QRCodeCanvas } from "qrcode.react";
+// import { useNavigate } from "react-router-dom";
 
-// export default function OrganizerDashboard() {
-
+// const Organizer = () => {
 //   const [events, setEvents] = useState([]);
-//   const [username, setUsername] = useState("");
-
-//   const [showSellModal, setShowSellModal] = useState(false);
-//   const [selectedEvent, setSelectedEvent] = useState(null);
-
-//   const [booking, setBooking] = useState(null);
-
-//   const [showConfirmBox, setShowConfirmBox] = useState(false);
-
-//   const [bookingData, setBookingData] = useState({
-//     customerName: "",
-//     customerPhone: "",
-//     ticketCount: 1
-//   });
-
 //   const navigate = useNavigate();
-//   const token = localStorage.getItem("token");
 
-//   // ---------------- LOAD EVENTS ----------------
-//   const loadMyEvents = () => {
-//     axios.get("http://localhost:8080/api/events/my-events", {
-//       headers: {
-//         Authorization: `Bearer ${token}`
-//       }
-//     })
-//     .then(res => setEvents(res.data))
-//     .catch(err => console.log(err));
-//   };
+//   // ===== SELL MODAL =====
+//   const [showSellModal, setShowSellModal] = useState(false);
+//   const [sellEventId, setSellEventId] = useState(null);
+//   const [categories, setCategories] = useState([]);
+//   const [selectedTickets, setSelectedTickets] = useState([]);
 
-//   // ---------------- TOKEN USER ----------------
-//   const getUsernameFromToken = () => {
+//   // ===== CUSTOMER FORM =====
+//   const [customerName, setCustomerName] = useState("");
+//   const [customerPhone, setCustomerPhone] = useState("");
+//   const [couponCode, setCouponCode] = useState("");
+//   const [paymentMethod, setPaymentMethod] = useState("CASH");
+//   const [transactionId, setTransactionId] = useState("");
+
+//   // ===== UPI ID =====
+//   const [upiId, setUpiId] = useState("");
+
+//   // ================= FETCH EVENTS =================
+//   const fetchAssignedEvents = async () => {
 //     try {
-//       const payload = JSON.parse(atob(token.split(".")[1]));
-//       setUsername(payload.sub);
-//     } catch (e) {
-//       console.log(e);
+//       const res = await axios.get(
+//         "http://localhost:8080/api/events/assigned",
+//         {
+//           headers: {
+//             Authorization: `Bearer ${localStorage.getItem("token")}`,
+//           },
+//         }
+//       );
+//       setEvents(res.data);
+//     } catch {
+//       toast.error("Failed to load events");
 //     }
 //   };
 
 //   useEffect(() => {
-//     loadMyEvents();
-//     getUsernameFromToken();
+//     fetchAssignedEvents();
 //   }, []);
 
-//   // ---------------- LOGOUT ----------------
+//   // ================= LOGOUT =================
 //   const handleLogout = () => {
 //     localStorage.removeItem("token");
 //     navigate("/");
 //   };
 
-//   // ---------------- BOOKING ----------------
-//   const handleBooking = () => {
+//   // ================= OPEN MODAL =================
+//   const openSellModal = async (eventId) => {
+//     setSellEventId(eventId);
+//     setShowSellModal(true);
+//     setSelectedTickets([]);
+//     setUpiId("");
 
-//     if (!bookingData.customerName || !bookingData.customerPhone) {
+//     setCustomerName("");
+//     setCustomerPhone("");
+//     setCouponCode("");
+//     setPaymentMethod("CASH");
+//     setTransactionId("");
+
+//     try {
+//       // categories
+//       const catRes = await axios.get(
+//         `http://localhost:8080/api/admin/events/${eventId}/categories`,
+//         {
+//           headers: {
+//             Authorization: `Bearer ${localStorage.getItem("token")}`,
+//           },
+//         }
+//       );
+//       setCategories(catRes.data);
+
+//       // UPI API
+//       const upiRes = await axios.get(
+//         `http://localhost:8080/api/event-config/${eventId}/upi`,
+//         {
+//           headers: {
+//             Authorization: `Bearer ${localStorage.getItem("token")}`,
+//           },
+//         }
+//       );
+
+//       setUpiId(upiRes.data);
+//     } catch {
+//       toast.error("Failed to load event data");
+//     }
+//   };
+
+//   // ================= UPDATE QTY =================
+//   const updateQuantity = (categoryId, quantity) => {
+//     const qty = parseInt(quantity || 0);
+
+//     setSelectedTickets((prev) => {
+//       const existing = prev.find((t) => t.categoryId === categoryId);
+
+//       if (existing) {
+//         return prev.map((t) =>
+//           t.categoryId === categoryId ? { ...t, quantity: qty } : t
+//         );
+//       }
+
+//       return [...prev, { categoryId, quantity: qty }];
+//     });
+//   };
+
+//   // ================= TOTAL =================
+//   const getTotalPrice = () => {
+//     return selectedTickets.reduce((total, t) => {
+//       const cat = categories.find((c) => c.id === t.categoryId);
+//       return total + (cat ? cat.price * t.quantity : 0);
+//     }, 0);
+//   };
+
+//   // ================= SELL API =================
+//   const handleSellTickets = async () => {
+//     if (!customerName || !customerPhone) {
+//       toast.error("Customer details required");
 //       return;
 //     }
 
 //     const payload = {
-//       eventId: selectedEvent.id,
-//       customerName: bookingData.customerName,
-//       customerPhone: bookingData.customerPhone,
-//       ticketCount: Number(bookingData.ticketCount)
+//       customerName,
+//       customerPhone,
+//       couponCode,
+//       paymentMethod,
+//       transactionId,
+//       selections: selectedTickets.filter((t) => t.quantity > 0),
 //     };
 
-//     axios.post("http://localhost:8080/api/bookings", payload, {
-//       headers: {
-//         Authorization: `Bearer ${token}`
-//       }
-//     })
-//     .then(res => {
-//       setBooking(res.data);
-//       setShowConfirmBox(false);
-//       loadMyEvents();
-//     })
-//     .catch(err => console.log(err));
+//     try {
+//       await axios.post(
+//         `http://localhost:8080/api/bookings`,
+//         payload,
+//         {
+//           headers: {
+//             Authorization: `Bearer ${localStorage.getItem("token")}`,
+//           },
+//         }
+//       );
+
+//       toast.success("Booking successful");
+//       setShowSellModal(false);
+//     } catch (err) {
+//       console.error(err);
+//       toast.error("Booking failed");
+//     }
 //   };
 
-//   // ---------------- CONFIRM PAYMENT ----------------
-//   const confirmPayment = (bookingId) => {
-
-//     axios.put(`http://localhost:8080/api/bookings/${bookingId}/confirm`, {}, {
-//       headers: {
-//         Authorization: `Bearer ${token}`
-//       }
-//     })
-//     .then(res => {
-//       setBooking(res.data);
-//       setShowConfirmBox(false);
-//       setShowSellModal(false);
-//       setBooking(null);
-
-//       setBookingData({
-//         customerName: "",
-//         customerPhone: "",
-//         ticketCount: 1
-//       });
-
-//       loadMyEvents();
-//     })
-//     .catch(err => console.log(err));
+//   // ================= UPI QR VALUE =================
+//   const getUpiValue = () => {
+//     if (!upiId) return "";
+//     return `upi://pay?pa=${upiId}&pn=Event&am=${getTotalPrice()}&cu=INR`;
 //   };
 
 //   return (
 //     <div className="min-h-screen bg-gray-100 p-6">
 
 //       {/* HEADER */}
-//       <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow">
-
-//         <h1 className="text-xl font-bold text-blue-600">
-//           Welcome Organizer 👉 {username}
-//         </h1>
+//       <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-xl shadow">
+//         <h1 className="text-2xl font-bold">Organizer Dashboard</h1>
 
 //         <button
 //           onClick={handleLogout}
-//           className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded"
+//           className="bg-red-500 text-white px-4 py-2 rounded flex items-center gap-2"
 //         >
-//           <LogOut size={18} />
+//           <LogOut size={16} />
 //           Logout
 //         </button>
-
 //       </div>
 
-//       <p className="text-gray-500 mt-4">
-//         Events assigned by admin will appear here.
-//       </p>
-
 //       {/* EVENTS */}
-//       {events.length === 0 ? (
-//         <p className="text-gray-400 mt-4">No events assigned yet.</p>
-//       ) : (
-//         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+//       <div className="grid md:grid-cols-3 gap-6">
+//         {events.map((event) => (
+//           <div key={event.id} className="bg-white p-5 rounded shadow">
 
-//           {events.map((e) => (
-//             <div key={e.id} className="bg-white p-5 rounded-xl shadow">
+//             <h2 className="text-xl font-bold">{event.eventName}</h2>
 
-//               <h2 className="text-lg font-bold text-blue-600">
-//                 {e.name}
-//               </h2>
-
-//               <div className="flex items-center gap-2 text-gray-600 mt-2">
-//                 <MapPin size={16} /> {e.location}
-//               </div>
-
-//               <div className="flex items-center gap-2 text-gray-600 mt-1">
-//                 <IndianRupee size={16} /> ₹ {e.price}
-//               </div>
-
-//               <div className="flex items-center gap-2 text-gray-600 mt-1">
-//                 <Ticket size={16} /> Total: {e.totalTickets}
-//               </div>
-
-//               <div className="text-gray-500 text-sm mt-1">
-//                 Available: {e.availableTickets}
-//               </div>
-
-//               <div className="flex items-center gap-2 text-gray-500 text-sm mt-2">
-//                 <CalendarDays size={16} /> {e.eventDate}
-//               </div>
-
-//               {/* SELL BUTTON */}
-//               <button
-//                 disabled={e.availableTickets === 0}
-//                 onClick={() => {
-//                   setSelectedEvent(e);
-//                   setShowSellModal(true);
-//                   setBooking(null);
-//                   setShowConfirmBox(false);
-//                 }}
-//                 className={`mt-4 w-full py-2 rounded text-white ${
-//                   e.availableTickets === 0
-//                     ? "bg-gray-400 cursor-not-allowed"
-//                     : "bg-blue-600 hover:bg-blue-700"
-//                 }`}
-//               >
-//                 {e.availableTickets === 0 ? "Sold Out" : "Sell Ticket"}
-//               </button>
-
+//             <div className="flex gap-2 items-center mt-2">
+//               <CalendarDays size={16} />
+//               {new Date(event.eventDate).toLocaleString()}
 //             </div>
-//           ))}
-//         </div>
-//       )}
+
+//             <div className="flex gap-2 items-center mt-2">
+//               <MapPin size={16} />
+//               {event.venueName}
+//             </div>
+
+//             <p className="mt-2 text-sm flex gap-2">
+//               <FileText size={16} />
+//               {event.eventDescription}
+//             </p>
+
+//             <button
+//               onClick={() => openSellModal(event.id)}
+//               className="mt-4 bg-green-600 text-white px-3 py-2 rounded"
+//             >
+//               Sell Tickets
+//             </button>
+//           </div>
+//         ))}
+//       </div>
 
 //       {/* MODAL */}
 //       {showSellModal && (
-//         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center">
+//         <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+//           <div className="bg-white p-5 rounded w-[520px] relative">
 
-//           <div className="bg-white p-6 rounded-xl w-[360px] shadow-lg">
+//             {/* CLOSE */}
+//             <button onClick={() => setShowSellModal(false)} className="absolute right-2 top-2">
+//               <X />
+//             </button>
 
-//             <h2 className="text-lg font-bold mb-4 text-blue-600">
-//               Sell Ticket - {selectedEvent?.name}
-//             </h2>
+//             <h2 className="text-lg font-bold mb-3">Sell Tickets</h2>
 
-//             {/* FORM */}
-//             {!booking && (
-//               <>
-//                 <input
-//                   type="text"
-//                   placeholder="Customer Name"
-//                   className="w-full border p-2 mb-3 rounded"
-//                   value={bookingData.customerName}
-//                   onChange={(e) =>
-//                     setBookingData({
-//                       ...bookingData,
-//                       customerName: e.target.value
-//                     })
-//                   }
-//                 />
+//             {/* CUSTOMER */}
+//             <input
+//               placeholder="Customer Name"
+//               className="border w-full p-2 mb-2"
+//               value={customerName}
+//               onChange={(e) => setCustomerName(e.target.value)}
+//             />
 
-//                 <input
-//                   type="text"
-//                   placeholder="Phone Number"
-//                   className="w-full border p-2 mb-3 rounded"
-//                   value={bookingData.customerPhone}
-//                   onChange={(e) =>
-//                     setBookingData({
-//                       ...bookingData,
-//                       customerPhone: e.target.value
-//                     })
-//                   }
-//                 />
+//             <input
+//               placeholder="Customer Phone"
+//               className="border w-full p-2 mb-2"
+//               value={customerPhone}
+//               onChange={(e) => setCustomerPhone(e.target.value)}
+//             />
 
-//                 <input
-//                   type="number"
-//                   className="w-full border p-2 mb-3 rounded"
-//                   value={bookingData.ticketCount}
-//                   onChange={(e) =>
-//                     setBookingData({
-//                       ...bookingData,
-//                       ticketCount: e.target.value
-//                     })
-//                   }
-//                 />
+//             <input
+//               placeholder="Coupon Code"
+//               className="border w-full p-2 mb-2"
+//               value={couponCode}
+//               onChange={(e) => setCouponCode(e.target.value)}
+//             />
 
-//                 <div className="flex justify-between">
-//                   <button
-//                     onClick={() => setShowSellModal(false)}
-//                     className="bg-gray-400 text-white px-4 py-2 rounded"
-//                   >
-//                     Cancel
-//                   </button>
+//             {/* PAYMENT */}
+//             <select
+//               className="border w-full p-2 mb-3"
+//               value={paymentMethod}
+//               onChange={(e) => setPaymentMethod(e.target.value)}
+//             >
+//               <option value="CASH">Cash</option>
+//               <option value="UPI">UPI</option>
+//               <option value="POS">POS</option>
+//             </select>
 
-//                   <button
-//                     onClick={handleBooking}
-//                     className="bg-green-600 text-white px-4 py-2 rounded"
-//                   >
-//                     Generate QR
-//                   </button>
-//                 </div>
-//               </>
+//             {paymentMethod !== "CASH" && (
+//               <input
+//                 placeholder="Transaction ID"
+//                 className="border w-full p-2 mb-3"
+//                 value={transactionId}
+//                 onChange={(e) => setTransactionId(e.target.value)}
+//               />
 //             )}
 
-//             {/* QR SECTION */}
-//             {booking && (
-//               <div className="flex flex-col items-center justify-center text-center mt-3">
-
-//                 <h3 className="font-bold text-green-600 mb-2">
-//                   Scan & Pay
-//                 </h3>
-
-//                 <QRCodeCanvas
-//                   value={`upi://pay?pa=9494901647@ybl&pn=EventApp&am=${booking.totalPrice}&cu=INR&tn=BOOKING_${booking.id}`}
-//                   size={200}
-//                 />
-
-//                 <p className="mt-2 font-semibold">
-//                   ₹ {booking.totalPrice}
+//             {/* QR CODE */}
+//             {paymentMethod === "UPI" && upiId && (
+//               <div className="flex flex-col items-center my-3">
+//                 <p className="text-sm font-semibold mb-2">
+//                   Scan & Pay ₹{getTotalPrice()}
 //                 </p>
 
-//                 <button
-//                   onClick={() => setShowConfirmBox(true)}
-//                   className="mt-4 w-full bg-green-600 text-white py-2 rounded"
-//                 >
-//                   Confirm Payment
-//                 </button>
+//                 <QRCodeCanvas value={getUpiValue()} size={180} />
 
-//                 {/* YES / NO BOX */}
-//                 {showConfirmBox && (
-//                   <div className="mt-4 p-4 border rounded bg-gray-50 w-full">
-
-//                     <p className="font-semibold mb-3 text-center">
-//                       Payment completed?
-//                     </p>
-
-//                     <div className="flex gap-3">
-//                       <button
-//                         onClick={() => setShowConfirmBox(false)}
-//                         className="w-full bg-gray-400 text-white py-2 rounded"
-//                       >
-//                         No
-//                       </button>
-
-//                       <button
-//                         onClick={() => confirmPayment(booking.id)}
-//                         className="w-full bg-green-600 text-white py-2 rounded"
-//                       >
-//                         Yes
-//                       </button>
-//                     </div>
-
-//                   </div>
-//                 )}
-
+//                 <p className="text-xs mt-2 text-gray-500">{upiId}</p>
 //               </div>
 //             )}
+
+//             {/* CATEGORIES */}
+//             <div className="max-h-48 overflow-auto space-y-2">
+//               {categories.map((cat) => (
+//                 <div key={cat.id} className="flex justify-between border p-2 rounded">
+
+//                   <div>
+//                     <p className="font-semibold">{cat.name}</p>
+//                     <p className="text-sm text-gray-500">
+//                       ₹{cat.price} | Avl: {cat.remainingQuantity}
+//                     </p>
+//                   </div>
+
+//                   <input
+//                     type="number"
+//                     min="0"
+//                     max={cat.remainingQuantity}
+//                     className="border w-16"
+//                     onChange={(e) =>
+//                       updateQuantity(cat.id, e.target.value)
+//                     }
+//                   />
+//                 </div>
+//               ))}
+//             </div>
+
+//             {/* TOTAL */}
+//             <div className="mt-3 font-bold">
+//               Total: ₹{getTotalPrice()}
+//             </div>
+
+//             {/* BUTTON */}
+//             <button
+//               onClick={handleSellTickets}
+//               className="w-full bg-blue-600 text-white py-2 mt-3 rounded"
+//             >
+//               Sell
+//             </button>
 
 //           </div>
 //         </div>
 //       )}
-
 //     </div>
 //   );
-// }
+// };
+
+// export default Organizer;
 
 
-
-
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import {
-  LogOut,
-  MapPin,
-  IndianRupee,
-  Ticket,
-  CalendarDays,
-  X
-} from "lucide-react";
+import { toast } from "react-toastify";
 import { QRCodeCanvas } from "qrcode.react";
+import {
+  CalendarDays,
+  MapPin,
+  FileText,
+  LogOut,
+  X,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-export default function OrganizerDashboard() {
-
+const Organizer = () => {
   const [events, setEvents] = useState([]);
-  const [username, setUsername] = useState("");
-
-  const [showSellModal, setShowSellModal] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState(null);
-
-  const [booking, setBooking] = useState(null);
-  const [showConfirmBox, setShowConfirmBox] = useState(false);
-
-  const [bookingData, setBookingData] = useState({
-    customerName: "",
-    customerPhone: "",
-    ticketCount: 1
-  });
-
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
 
-  // ---------------- LOAD EVENTS ----------------
-  const loadMyEvents = () => {
-    axios.get("http://localhost:8080/api/events/my-events", {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    .then(res => setEvents(res.data))
-    .catch(console.log);
-  };
+  // ===== SELL MODAL =====
+  const [showSellModal, setShowSellModal] = useState(false);
+  const [sellEventId, setSellEventId] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [selectedTickets, setSelectedTickets] = useState([]);
 
-  // ---------------- USER ----------------
-  const getUsernameFromToken = () => {
+  // ===== COUPONS =====
+  const [coupons, setCoupons] = useState([]);
+  const [selectedCoupon, setSelectedCoupon] = useState(null);
+
+  // ===== CUSTOMER FORM =====
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [couponCode, setCouponCode] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("CASH");
+  const [transactionId, setTransactionId] = useState("");
+
+  // ===== UPI ID =====
+  const [upiId, setUpiId] = useState("");
+
+  // ================= FETCH EVENTS =================
+  const fetchAssignedEvents = async () => {
     try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      setUsername(payload.sub);
-    } catch (e) {
-      console.log(e);
+      const res = await axios.get(
+        "http://localhost:8080/api/events/assigned",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setEvents(res.data);
+    } catch {
+      toast.error("Failed to load events");
     }
   };
 
   useEffect(() => {
-    loadMyEvents();
-    getUsernameFromToken();
+    fetchAssignedEvents();
   }, []);
 
-  // ---------------- LOGOUT ----------------
+  // ================= LOGOUT =================
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/");
   };
 
-  // ---------------- BOOKING ----------------
-  const handleBooking = () => {
+  // ================= OPEN MODAL =================
+  const openSellModal = async (eventId) => {
+    setSellEventId(eventId);
+    setShowSellModal(true);
+    setSelectedTickets([]);
+    setUpiId("");
+    setCoupons([]);
+    setSelectedCoupon(null);
 
-    if (!bookingData.customerName || !bookingData.customerPhone) return;
+    setCustomerName("");
+    setCustomerPhone("");
+    setCouponCode("");
+    setPaymentMethod("CASH");
+    setTransactionId("");
+
+    try {
+      // categories
+      const catRes = await axios.get(
+        `http://localhost:8080/api/admin/events/${eventId}/categories`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setCategories(catRes.data);
+
+      // UPI
+      const upiRes = await axios.get(
+        `http://localhost:8080/api/event-config/${eventId}/upi`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setUpiId(upiRes.data);
+
+      // ✅ FETCH COUPONS (OPTION 2 FIX APPLIED)
+      const couponRes = await axios.get(
+        `http://localhost:8080/api/admin/events/${eventId}/coupons`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      // 🔥 ONLY VALID DATE FILTER (NO ACTIVE CHECK)
+      const validCoupons = couponRes.data.filter(
+        (c) => new Date(c.validTill) > new Date()
+      );
+
+      setCoupons(validCoupons);
+
+    } catch {
+      toast.error("Failed to load event data");
+    }
+  };
+
+  // ================= UPDATE QTY =================
+  const updateQuantity = (categoryId, quantity) => {
+    const qty = parseInt(quantity || 0);
+
+    setSelectedTickets((prev) => {
+      const existing = prev.find((t) => t.categoryId === categoryId);
+
+      if (existing) {
+        return prev.map((t) =>
+          t.categoryId === categoryId ? { ...t, quantity: qty } : t
+        );
+      }
+
+      return [...prev, { categoryId, quantity: qty }];
+    });
+  };
+
+  // ================= TOTAL =================
+  const getTotalPrice = () => {
+    return selectedTickets.reduce((total, t) => {
+      const cat = categories.find((c) => c.id === t.categoryId);
+      return total + (cat ? cat.price * t.quantity : 0);
+    }, 0);
+  };
+
+  // ================= DISCOUNT =================
+  const getDiscountedTotal = () => {
+    const total = getTotalPrice();
+
+    if (!selectedCoupon) return total;
+
+    const discount = (total * selectedCoupon.discountPercentage) / 100;
+    return total - discount;
+  };
+
+  // ================= SELL API =================
+  const handleSellTickets = async () => {
+    if (!customerName || !customerPhone) {
+      toast.error("Customer details required");
+      return;
+    }
 
     const payload = {
-      eventId: selectedEvent.id,
-      customerName: bookingData.customerName,
-      customerPhone: bookingData.customerPhone,
-      ticketCount: Number(bookingData.ticketCount)
+      customerName,
+      customerPhone,
+      couponCode,
+      paymentMethod,
+      transactionId,
+      selections: selectedTickets.filter((t) => t.quantity > 0),
     };
 
-    axios.post("http://localhost:8080/api/bookings", payload, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    .then(res => {
-      setBooking(res.data);
-      setShowConfirmBox(false);
-      loadMyEvents();
-    })
-    .catch(console.log);
-  };
+    try {
+      await axios.post(
+        `http://localhost:8080/api/bookings`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
-  // ---------------- CONFIRM PAYMENT ----------------
-  const confirmPayment = (bookingId) => {
-    axios.put(
-      `http://localhost:8080/api/bookings/${bookingId}/confirm`,
-      {},
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
-    .then(res => {
-      setBooking(res.data);
-
-      setShowConfirmBox(false);
+      toast.success("Booking successful");
       setShowSellModal(false);
-
-      setBooking(null);
-      setSelectedEvent(null);
-
-      setBookingData({
-        customerName: "",
-        customerPhone: "",
-        ticketCount: 1
-      });
-
-      loadMyEvents();
-    })
-    .catch(console.log);
+    } catch (err) {
+      console.error(err);
+      toast.error("Booking failed");
+    }
   };
 
-  // ---------------- RESET MODAL ----------------
-  const closeModal = () => {
-    setShowSellModal(false);
-    setBooking(null);
-    setShowConfirmBox(false);
-    setSelectedEvent(null);
-
-    setBookingData({
-      customerName: "",
-      customerPhone: "",
-      ticketCount: 1
-    });
+  // ================= UPI VALUE =================
+  const getUpiValue = () => {
+    if (!upiId) return "";
+    return `upi://pay?pa=${upiId}&pn=Event&am=${getDiscountedTotal()}&cu=INR`;
   };
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
 
       {/* HEADER */}
-      <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow">
-        <h1 className="text-xl font-bold text-blue-600">
-          Welcome Organizer {username}
-        </h1>
+      <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-xl shadow">
+        <h1 className="text-2xl font-bold">Organizer Dashboard</h1>
 
         <button
           onClick={handleLogout}
-          className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded"
+          className="bg-red-500 text-white px-4 py-2 rounded flex items-center gap-2"
         >
-          <LogOut size={18} /> Logout
+          <LogOut size={16} />
+          Logout
         </button>
       </div>
 
       {/* EVENTS */}
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid md:grid-cols-3 gap-6">
+        {events.map((event) => (
+          <div key={event.id} className="bg-white p-5 rounded shadow">
 
-        {events.map((e) => (
-          <div key={e.id} className="bg-white p-5 rounded-xl shadow">
+            <h2 className="text-xl font-bold">{event.eventName}</h2>
 
-            <h2 className="text-lg font-bold text-blue-600">{e.name}</h2>
-
-            <div className="flex items-center gap-2 mt-2">
-              <MapPin size={16} /> {e.location}
+            <div className="flex gap-2 items-center mt-2">
+              <CalendarDays size={16} />
+              {new Date(event.eventDate).toLocaleString()}
             </div>
 
-            <div className="flex items-center gap-2 mt-1">
-              <IndianRupee size={16} /> ₹ {e.price}
+            <div className="flex gap-2 items-center mt-2">
+              <MapPin size={16} />
+              {event.venueName}
             </div>
 
-            <div className="flex items-center gap-2 mt-1">
-              <Ticket size={16} /> Available: {e.availableTickets}
-            </div>
-
-            <div className="flex items-center gap-2 mt-2 text-sm">
-              <CalendarDays size={16} /> {e.eventDate}
-            </div>
+            <p className="mt-2 text-sm flex gap-2">
+              <FileText size={16} />
+              {event.eventDescription}
+            </p>
 
             <button
-              disabled={e.availableTickets === 0}
-              onClick={() => {
-                setSelectedEvent(e);
-                setShowSellModal(true);
-                setBooking(null);
-              }}
-              className={`mt-4 w-full py-2 rounded text-white ${
-                e.availableTickets === 0
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-blue-600"
-              }`}
+              onClick={() => openSellModal(event.id)}
+              className="mt-4 bg-green-600 text-white px-3 py-2 rounded"
             >
-              {e.availableTickets === 0 ? "Sold Out" : "Sell Ticket"}
+              Sell Tickets
             </button>
-
           </div>
         ))}
       </div>
@@ -809,112 +579,132 @@ export default function OrganizerDashboard() {
       {/* MODAL */}
       {showSellModal && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+          <div className="bg-white p-5 rounded w-[520px] relative">
 
-          <div className="bg-white p-6 rounded-xl w-[380px] relative">
-
-            {/* CLOSE BUTTON */}
-            <button
-              onClick={closeModal}
-              className="absolute top-2 right-2 text-gray-500 hover:text-red-600"
-            >
+            <button onClick={() => setShowSellModal(false)} className="absolute right-2 top-2">
               <X />
             </button>
 
-            <h2 className="text-lg font-bold text-blue-600 text-center mb-4">
-              Sell Ticket - {selectedEvent?.name}
-            </h2>
+            <h2 className="text-lg font-bold mb-3">Sell Tickets</h2>
 
-            {/* FORM */}
-            {!booking && (
-              <>
-                <input
-                  className="w-full border p-2 mb-3 rounded"
-                  placeholder="Customer Name"
-                  value={bookingData.customerName}
-                  onChange={(e) =>
-                    setBookingData({ ...bookingData, customerName: e.target.value })
-                  }
-                />
+            {/* CUSTOMER */}
+            <input
+              placeholder="Customer Name"
+              className="border w-full p-2 mb-2"
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
+            />
 
-                <input
-                  className="w-full border p-2 mb-3 rounded"
-                  placeholder="Phone"
-                  value={bookingData.customerPhone}
-                  onChange={(e) =>
-                    setBookingData({ ...bookingData, customerPhone: e.target.value })
-                  }
-                />
+            <input
+              placeholder="Customer Phone"
+              className="border w-full p-2 mb-2"
+              value={customerPhone}
+              onChange={(e) => setCustomerPhone(e.target.value)}
+            />
 
-                <input
-                  type="number"
-                  className="w-full border p-2 mb-3 rounded"
-                  value={bookingData.ticketCount}
-                  onChange={(e) =>
-                    setBookingData({ ...bookingData, ticketCount: e.target.value })
-                  }
-                />
+            {/* COUPON DROPDOWN */}
+            <select
+              className="border w-full p-2 mb-2"
+              value={couponCode}
+              onChange={(e) => {
+                const code = e.target.value;
+                setCouponCode(code);
 
-                <button
-                  onClick={handleBooking}
-                  className="w-full bg-green-600 text-white py-2 rounded"
-                >
-                  Generate QR
-                </button>
-              </>
+                const selected = coupons.find(c => c.code === code);
+                setSelectedCoupon(selected || null);
+              }}
+            >
+              <option value="">Select Coupon</option>
+              {coupons.map((c) => (
+                <option key={c.id} value={c.code}>
+                  {c.code} ({c.discountPercentage}% OFF)
+                </option>
+              ))}
+            </select>
+
+            {/* PAYMENT */}
+            <select
+              className="border w-full p-2 mb-3"
+              value={paymentMethod}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+            >
+              <option value="CASH">Cash</option>
+              <option value="UPI">UPI</option>
+              <option value="POS">POS</option>
+            </select>
+
+            {paymentMethod !== "CASH" && (
+              <input
+                placeholder="Transaction ID"
+                className="border w-full p-2 mb-3"
+                value={transactionId}
+                onChange={(e) => setTransactionId(e.target.value)}
+              />
             )}
 
             {/* QR */}
-            {booking && (
-              <div className="flex flex-col items-center text-center">
+            {paymentMethod === "UPI" && upiId && (
+              <div className="flex flex-col items-center my-3">
+                <p className="text-sm font-semibold mb-2">
+                  Scan & Pay ₹{getDiscountedTotal()}
+                </p>
 
-                <h3 className="font-bold text-green-600 mb-2">
-                  Scan & Pay
-                </h3>
+                <QRCodeCanvas value={getUpiValue()} size={180} />
 
-                <QRCodeCanvas
-                  value={`upi://pay?pa=9494901647@ybl&pn=EventApp&am=${booking.totalPrice}&cu=INR&tn=BOOKING_${booking.id}`}
-                  size={200}
-                />
-
-                <p className="mt-2 font-semibold">₹ {booking.totalPrice}</p>
-
-                <button
-                  onClick={() => setShowConfirmBox(true)}
-                  className="mt-3 w-full bg-green-600 text-white py-2 rounded"
-                >
-                  Confirm Payment
-                </button>
-
-                {/* YES / NO */}
-                {showConfirmBox && (
-                  <div className="mt-4 w-full">
-                    <p className="mb-2 font-semibold">Payment completed?</p>
-
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => setShowConfirmBox(false)}
-                        className="w-full bg-gray-400 text-white py-2 rounded"
-                      >
-                        No
-                      </button>
-
-                      <button
-                        onClick={() => confirmPayment(booking.id)}
-                        className="w-full bg-green-600 text-white py-2 rounded"
-                      >
-                        Yes
-                      </button>
-                    </div>
-                  </div>
-                )}
-
+                <p className="text-xs mt-2 text-gray-500">{upiId}</p>
               </div>
             )}
+
+            {/* CATEGORIES */}
+            <div className="max-h-48 overflow-auto space-y-2">
+              {categories.map((cat) => (
+                <div key={cat.id} className="flex justify-between border p-2 rounded">
+
+                  <div>
+                    <p className="font-semibold">{cat.name}</p>
+                    <p className="text-sm text-gray-500">
+                      ₹{cat.price} | Avl: {cat.remainingQuantity}
+                    </p>
+                  </div>
+
+                  <input
+                    type="number"
+                    min="0"
+                    max={cat.remainingQuantity}
+                    className="border w-16"
+                    onChange={(e) =>
+                      updateQuantity(cat.id, e.target.value)
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* TOTAL */}
+            <div className="mt-3 font-bold">
+              Total: ₹{getTotalPrice()}
+            </div>
+
+            {/* DISCOUNTED */}
+            {selectedCoupon && (
+              <div className="text-green-600 font-bold">
+                Discounted: ₹{getDiscountedTotal()}
+              </div>
+            )}
+
+            {/* BUTTON */}
+            <button
+              onClick={handleSellTickets}
+              className="w-full bg-blue-600 text-white py-2 mt-3 rounded"
+            >
+              Sell
+            </button>
 
           </div>
         </div>
       )}
-
     </div>
   );
-}
+};
+
+export default Organizer;
