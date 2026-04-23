@@ -38,7 +38,7 @@ const handleSubmit = async () => {
 
   try {
     const response = await axios.post(
-      "http://localhost:8080/api/events",
+      "https://event-management-api-production-94b1.up.railway.app/api/events",
       form,
       {
         headers: {

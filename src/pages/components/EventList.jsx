@@ -38,7 +38,7 @@ export default function EventList() {
 
   // 🔥 GET EVENTS
   const loadEvents = () => {
-    axios.get("http://localhost:8080/api/events", {
+    axios.get("https://event-management-api-production-94b1.up.railway.app/api/events", {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(res => setEvents(res.data))
@@ -47,7 +47,7 @@ export default function EventList() {
 
   // 🔥 GET ORGANIZERS (ADDED)
   const loadOrganizers = () => {
-    axios.get("http://localhost:8080/auth/users/organizers", {
+    axios.get("https://event-management-api-production-94b1.up.railway.app/auth/users/organizers", {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(res => setOrganizers(res.data))
@@ -66,7 +66,7 @@ export default function EventList() {
 
   // 🔥 ADD EVENT
   const addEvent = () => {
-    axios.post("http://localhost:8080/api/events", {
+    axios.post("https://event-management-api-production-94b1.up.railway.app/api/events", {
       ...form,
       price: Number(form.price),
       totalTickets: Number(form.totalTickets),
@@ -100,7 +100,7 @@ export default function EventList() {
 
   // ✏️ UPDATE EVENT
   const updateEvent = () => {
-    axios.put(`http://localhost:8080/api/events/${editId}`, {
+    axios.put(`https://event-management-api-production-94b1.up.railway.app/api/events/${editId}`, {
       ...form,
       price: form.price ? Number(form.price) : null,
       totalTickets: form.totalTickets ? Number(form.totalTickets) : null,
@@ -120,7 +120,7 @@ export default function EventList() {
   const deleteEvent = (id) => {
     if (!window.confirm("Delete this event?")) return;
 
-    axios.delete(`http://localhost:8080/api/events/${id}`, {
+    axios.delete(`https://event-management-api-production-94b1.up.railway.app/api/events/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(() => loadEvents())
@@ -130,7 +130,7 @@ export default function EventList() {
   // ➕ ASSIGN ORGANIZER (ADDED)
   const assignOrganizer = () => {
     axios.put(
-      `http://localhost:8080/api/events/${selectedEventId}/assign/${selectedOrgId}`,
+      `https://event-management-api-production-94b1.up.railway.app/api/events/${selectedEventId}/assign/${selectedOrgId}`,
       {},
       {
         headers: { Authorization: `Bearer ${token}` }

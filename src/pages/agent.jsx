@@ -369,7 +369,7 @@ const Organizer = () => {
   const fetchAssignedEvents = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:8080/api/events/assigned",
+        "https://event-management-api-production-94b1.up.railway.app/events/assigned",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -410,7 +410,7 @@ const Organizer = () => {
     try {
       // categories
       const catRes = await axios.get(
-        `http://localhost:8080/api/admin/events/${eventId}/categories`,
+        `https://event-management-api-production-94b1.up.railway.app/api/admin/events/${eventId}/categories`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -421,7 +421,7 @@ const Organizer = () => {
 
       // UPI
       const upiRes = await axios.get(
-        `http://localhost:8080/api/event-config/${eventId}/upi`,
+        `https://event-management-api-production-94b1.up.railway.app/api/event-config/${eventId}/upi`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -432,7 +432,7 @@ const Organizer = () => {
 
       // ✅ FETCH COUPONS (OPTION 2 FIX APPLIED)
       const couponRes = await axios.get(
-        `http://localhost:8080/api/admin/events/${eventId}/coupons`,
+        `https://event-management-api-production-94b1.up.railway.app/api/admin/events/${eventId}/coupons`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -505,7 +505,7 @@ const Organizer = () => {
 
     try {
       await axios.post(
-        `http://localhost:8080/api/bookings`,
+        `https://event-management-api-production-94b1.up.railway.app/api/bookings`,
         payload,
         {
           headers: {

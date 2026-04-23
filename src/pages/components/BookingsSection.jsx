@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const BookingsSection = () => {
   const [bookings, setBookings] = useState([]);
   const [search, setSearch] = useState("");
 
-  // Date filters
+  // ✅ Date filters ONLY for stats
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
 
   // ================= FETCH BOOKINGS =================
   const fetchBookings = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/bookings", {
+      const res = await axios.get("https://event-management-api-production-94b1.up.railway.app/api/bookings", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -31,70 +31,112 @@ const BookingsSection = () => {
     fetchBookings();
   }, []);
 
-  // ================= FILTER LOGIC =================
-  const filteredBookings = bookings.filter((b) => {
-    const matchSearch = `${b.bookingId} ${b.customerName} ${b.customerPhone}`
+  // ================= TABLE FILTER (ONLY SEARCH) =================
+  const tableBookings = bookings.filter((b) =>
+    `${b.bookingId} ${b.customerName} ${b.customerPhone}`
       .toLowerCase()
-      .includes(search.toLowerCase());
+      .includes(search.toLowerCase())
+  );
 
+  // ================= STATS FILTER (DATE ONLY) =================
+  const statsBookings = bookings.filter((b) => {
     const bookingDate = new Date(b.bookingTime);
 
     const matchFrom = fromDate ? bookingDate >= new Date(fromDate) : true;
     const matchTo = toDate ? bookingDate <= new Date(toDate) : true;
 
-    return matchSearch && matchFrom && matchTo;
+    return matchFrom && matchTo;
   });
 
-  // ================= PDF DOWNLOAD =================
-  const downloadPDF = () => {
-    const doc = new jsPDF();
+  // ================= STATS =================
+  const totalBookings = statsBookings.length;
 
-    doc.text("Booking Report", 14, 10);
+  const totalRevenue = statsBookings.reduce(
+    (sum, b) => sum + (b.totalAmount || 0),
+    0
+  );
 
-    const tableData = filteredBookings.map((b) => [
-      b.bookingId,
-      b.customerName,
-      b.customerPhone,
-      `₹${b.totalAmount}`,
-      b.paymentStatus,
-      b.paymentMethod,
-      new Date(b.bookingTime).toLocaleString(),
-    ]);
+  const paidAmount = statsBookings
+    .filter((b) => b.paymentStatus === "PAID")
+    .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
 
-    // ✅ FIXED WAY (NO doc.autoTable)
-    autoTable(doc, {
-      head: [[
-        "ID",
-        "Customer",
-        "Phone",
-        "Amount",
-        "Status",
-        "Method",
-        "Date",
-      ]],
-      body: tableData,
-      startY: 20,
+  const pendingAmount = statsBookings
+    .filter((b) => b.paymentStatus !== "PAID")
+    .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+
+  // ================= EXCEL DOWNLOAD =================
+  const downloadExcel = () => {
+    const data = [];
+
+    tableBookings.forEach((b) => {
+      if (b.items && b.items.length > 0) {
+        b.items.forEach((item) => {
+          data.push({
+            ...b,
+            categoryName: item.categoryName,
+            quantity: item.quantity,
+            price: item.price,
+          });
+        });
+      } else {
+        data.push({ ...b });
+      }
     });
 
-    doc.save("bookings.pdf");
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Bookings");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+
+    saveAs(new Blob([excelBuffer]), "Bookings_Report.xlsx");
   };
 
   return (
     <div className="p-4">
 
+      {/* ================= STATS CARDS ================= */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+
+        <div className="bg-blue-500 text-white p-4 rounded shadow">
+          <h3>Total Bookings</h3>
+          <p className="text-xl font-bold">{totalBookings}</p>
+        </div>
+
+        <div className="bg-green-500 text-white p-4 rounded shadow">
+          <h3>Total Revenue</h3>
+          <p className="text-xl font-bold">₹{totalRevenue}</p>
+        </div>
+
+        <div className="bg-emerald-600 text-white p-4 rounded shadow">
+          <h3>Paid</h3>
+          <p className="text-xl font-bold">₹{paidAmount}</p>
+        </div>
+
+        <div className="bg-red-500 text-white p-4 rounded shadow">
+          <h3>Pending</h3>
+          <p className="text-xl font-bold">₹{pendingAmount}</p>
+        </div>
+
+      </div>
+
       {/* ================= FILTER BAR ================= */}
       <div className="flex flex-wrap gap-3 mb-4 items-end">
 
-        {/* SEARCH */}
+        {/* SEARCH → TABLE ONLY */}
         <input
           type="text"
-          placeholder="Search name, phone, booking id..."
+          placeholder="Search..."
           className="border p-2 rounded w-64"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        {/* FROM DATE */}
+        {/* DATE FILTER → STATS ONLY */}
         <div>
           <label className="text-sm">From</label>
           <input
@@ -105,7 +147,6 @@ const BookingsSection = () => {
           />
         </div>
 
-        {/* TO DATE */}
         <div>
           <label className="text-sm">To</label>
           <input
@@ -116,12 +157,11 @@ const BookingsSection = () => {
           />
         </div>
 
-        {/* PDF BUTTON */}
         <button
-          onClick={downloadPDF}
-          className="bg-red-500 text-white px-4 py-2 rounded"
+          onClick={downloadExcel}
+          className="bg-green-600 text-white px-4 py-2 rounded"
         >
-          Download PDF
+          Download Excel
         </button>
 
       </div>
@@ -144,14 +184,14 @@ const BookingsSection = () => {
           </thead>
 
           <tbody>
-            {filteredBookings.length === 0 ? (
+            {tableBookings.length === 0 ? (
               <tr>
                 <td colSpan="7" className="text-center p-4">
                   No bookings found
                 </td>
               </tr>
             ) : (
-              filteredBookings.map((b) => (
+              tableBookings.map((b) => (
                 <tr key={b.bookingId} className="text-center">
 
                   <td className="p-2 border">{b.bookingId}</td>

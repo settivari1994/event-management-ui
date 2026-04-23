@@ -24,7 +24,7 @@ export default function Register() {
     e.preventDefault();
 
     try {
-      await axios.post("http://localhost:8080/auth/register", form);
+      await axios.post("https://event-management-api-production-94b1.up.railway.app/auth/register", form);
       navigate("/");
 
     } catch (err) {
