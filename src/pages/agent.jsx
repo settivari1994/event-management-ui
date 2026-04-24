@@ -369,7 +369,7 @@ const Organizer = () => {
   const fetchAssignedEvents = async () => {
     try {
       const res = await axios.get(
-        "https://event-management-api-production-94b1.up.railway.app/events/assigned",
+        "https://event-management-api-production-94b1.up.railway.app/api/events/assigned",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
