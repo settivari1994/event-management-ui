@@ -312,19 +312,26 @@ const EventSection = () => {
               {activeMenu === event.id && (
                 <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-10">
 
-                  <button onClick={() => openCouponModal(event.id)} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
+
+                  <button
+                    onClick={() => {
+                      openCouponModal(event.id);
+                      setActiveMenu(null);
+                    }}
+                    className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                  >
                     Coupons
                   </button>
 
-                  <button onClick={() => { setSelectedEventId(event.id); setShowUpiModal(true); }} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
+                  <button onClick={() => { setSelectedEventId(event.id); setShowUpiModal(true); setActiveMenu(null); }} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
                     UPI
                   </button>
 
-                  <button onClick={() => openAssignModal(event.id)} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
+                  <button onClick={() => { openAssignModal(event.id), setActiveMenu(null); }} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
                     Assign Organisers
                   </button>
 
-                  <button onClick={() => openCategoryModal(event.id)} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
+                  <button onClick={() => { openCategoryModal(event.id), setActiveMenu(null); }} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
                     Add Ticket Categories
                   </button>
 
@@ -371,7 +378,6 @@ const EventSection = () => {
             <input name="name" placeholder="Name" className="border p-2 w-full mb-2" onChange={handleCategoryChange} />
             <input name="price" placeholder="Price" className="border p-2 w-full mb-2" onChange={handleCategoryChange} />
             <input name="totalQuantity" placeholder="Total Quantity" className="border p-2 w-full mb-2" onChange={handleCategoryChange} />
-            <input name="validTill" type="datetime-local" className="border p-2 w-full mb-2" onChange={handleCategoryChange} />
 
             <button onClick={createCategory} className="bg-green-600 text-white px-3 py-2 w-full rounded">
               Create Category
@@ -453,9 +459,9 @@ const EventSection = () => {
 
             <h2 className="font-bold mb-3">Coupons</h2>
 
-            <input name="code" placeholder="Code" className="border p-2 w-full mb-2" onChange={handleCouponChange} value={couponForm.code}/>
-            <input name="discountPercentage" placeholder="Discount %" className="border p-2 w-full mb-2" onChange={handleCouponChange} value={couponForm.discountPercentage}/>
-            <input name="validTill" type="datetime-local" className="border p-2 w-full mb-2" onChange={handleCouponChange} value={couponForm.validTill}/>
+            <input name="code" placeholder="Code" className="border p-2 w-full mb-2" onChange={handleCouponChange} value={couponForm.code} />
+            <input name="discountPercentage" placeholder="Discount %" className="border p-2 w-full mb-2" onChange={handleCouponChange} value={couponForm.discountPercentage} />
+            <input name="validTill" type="datetime-local" className="border p-2 w-full mb-2" onChange={handleCouponChange} value={couponForm.validTill} />
 
             <button onClick={saveCoupon} className="bg-yellow-600 text-white px-3 py-2 w-full rounded">
               {editingCouponId ? "Update Coupon" : "Create Coupon"}
@@ -482,3 +488,4 @@ const EventSection = () => {
 };
 
 export default EventSection;
+
