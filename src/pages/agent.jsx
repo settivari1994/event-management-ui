@@ -779,15 +779,15 @@ const Organizer = () => {
   };
 
   // ================= WHATSAPP =================
-  const sendWhatsApp = (booking) => {
-    if (!booking?.customerPhone) {
-      toast.error("Phone missing");
-      return;
-    }
+   const sendWhatsApp = (booking) => {
+  if (!booking?.customerPhone) {
+    toast.error("Phone missing");
+    return;
+  }
 
-    const phone = booking.customerPhone.replace(/\D/g, "");
+  const phone = booking.customerPhone.replace(/\D/g, "");
 
-    const message = `🎉 Booking Confirmed!
+  const message = `🎉 Booking Confirmed!
 
 Booking ID: ${booking.bookingId}
 Customer: ${booking.customerName}
@@ -796,11 +796,10 @@ Payment: ${booking.paymentStatus}
 
 Thank you!`;
 
-    const url = `https://web.whatsapp.com/send?phone=91${phone}&text=${encodeURIComponent(message)}`;
+  const url = `https://wa.me/91${phone}?text=${encodeURIComponent(message)}`;
 
-    window.open(url, "_blank");
-  };
-
+  window.location.href = url; // better for mobile
+};
   // ================= OPEN MODAL =================
   const openSellModal = async (eventId) => {
     setSellEventId(eventId);
