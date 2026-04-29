@@ -7,27 +7,50 @@ import { Link } from "react-router-dom";
 export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
 
+        // clear previous error
+        setError("");
+
+        if (!username || !password) {
+            setError("Please enter username and password");
+            return;
+        }
+
+        setLoading(true);
+
         try {
-            const res = await axios.post("https://event-management-api-production-94b1.up.railway.app/auth/login", {
-                username,
-                password,
-            });
+            const res = await axios.post(
+                "https://event-management-api-production-94b1.up.railway.app/auth/login",
+                {
+                    username,
+                    password,
+                }
+            );
 
             const token = res.data.token;
 
-            // 💾 Save token
+            // Save token
             localStorage.setItem("token", token);
 
-            // 🔍 Decode role
-            const decoded = jwtDecode(token);
-            const role = decoded.role.replace("ROLE_", "");
+            // Decode role
+            let role = "CUSTOMER";
+            try {
+                const decoded = jwtDecode(token);
+                role = decoded.role?.replace("ROLE_", "") || "CUSTOMER";
+            } catch (err) {
+                console.error("Token decode failed", err);
+            }
 
-            // 🚀 Redirect based on role
+            localStorage.setItem("role", role);
+
+            // Redirect
             if (role === "ADMIN") {
                 navigate("/admin");
             } else if (role === "ORGANIZER") {
@@ -37,7 +60,9 @@ export default function Login() {
             }
 
         } catch (err) {
-            alert("Invalid username or password");
+            setError("Invalid username or password");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -50,6 +75,13 @@ export default function Login() {
                 </h2>
 
                 <form onSubmit={handleLogin} className="space-y-4">
+
+                    {/* ERROR MESSAGE */}
+                    {error && (
+                        <div className="bg-red-100 text-red-600 p-2 rounded text-sm text-center">
+                            {error}
+                        </div>
+                    )}
 
                     <input
                         type="text"
@@ -69,15 +101,23 @@ export default function Login() {
 
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700"
+                        disabled={loading}
+                        className={`w-full p-3 rounded-lg text-white ${
+                            loading
+                                ? "bg-gray-400 cursor-not-allowed"
+                                : "bg-blue-600 hover:bg-blue-700"
+                        }`}
                     >
-                        Login
+                        {loading ? "Logging in..." : "Login"}
                     </button>
 
                     <div className="text-center mt-4">
                         <p className="text-sm">
                             Don’t have an account?
-                            <Link to="/register" className="text-blue-600 ml-1 font-semibold">
+                            <Link
+                                to="/register"
+                                className="text-blue-600 ml-1 font-semibold"
+                            >
                                 Register
                             </Link>
                         </p>

@@ -36,7 +36,6 @@ const EventSection = () => {
     name: "",
     price: "",
     totalQuantity: "",
-    validTill: ""
   });
 
   // Coupons
@@ -47,7 +46,6 @@ const EventSection = () => {
   const [couponForm, setCouponForm] = useState({
     code: "",
     discountPercentage: "",
-    validTill: ""
   });
 
   const [editingCouponId, setEditingCouponId] = useState(null);
@@ -167,9 +165,9 @@ const EventSection = () => {
   };
 
   const createCategory = async () => {
-    const { name, price, totalQuantity, validTill } = categoryForm;
+    const { name, price, totalQuantity } = categoryForm;
 
-    if (!name || !price || !totalQuantity || !validTill) {
+    if (!name || !price || !totalQuantity ) {
       toast.error("All fields are required");
       return;
     }
@@ -192,7 +190,6 @@ const EventSection = () => {
         name: "",
         price: "",
         totalQuantity: "",
-        validTill: ""
       });
 
     } catch {
@@ -225,9 +222,9 @@ const EventSection = () => {
   };
 
   const saveCoupon = async () => {
-    const { code, discountPercentage, validTill } = couponForm;
+    const { code, discountPercentage } = couponForm;
 
-    if (!code || !discountPercentage || !validTill) {
+    if (!code || !discountPercentage ) {
       toast.error("All fields required");
       return;
     }
@@ -249,7 +246,7 @@ const EventSection = () => {
         toast.success("Coupon created");
       }
 
-      setCouponForm({ code: "", discountPercentage: "", validTill: "" });
+      setCouponForm({ code: "", discountPercentage: ""});
       setEditingCouponId(null);
       openCouponModal(couponEventId);
 
@@ -320,11 +317,11 @@ const EventSection = () => {
                     }}
                     className="block w-full text-left px-4 py-2 hover:bg-gray-100"
                   >
-                    Coupons
+                   Create Coupons
                   </button>
 
                   <button onClick={() => { setSelectedEventId(event.id); setShowUpiModal(true); setActiveMenu(null); }} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
-                    UPI
+                   Configure UPI
                   </button>
 
                   <button onClick={() => { openAssignModal(event.id), setActiveMenu(null); }} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
@@ -461,7 +458,6 @@ const EventSection = () => {
 
             <input name="code" placeholder="Code" className="border p-2 w-full mb-2" onChange={handleCouponChange} value={couponForm.code} />
             <input name="discountPercentage" placeholder="Discount %" className="border p-2 w-full mb-2" onChange={handleCouponChange} value={couponForm.discountPercentage} />
-            <input name="validTill" type="datetime-local" className="border p-2 w-full mb-2" onChange={handleCouponChange} value={couponForm.validTill} />
 
             <button onClick={saveCoupon} className="bg-yellow-600 text-white px-3 py-2 w-full rounded">
               {editingCouponId ? "Update Coupon" : "Create Coupon"}

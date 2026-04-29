@@ -11,6 +11,9 @@ export default function Register() {
     role: "SELECT"
   });
 
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -18,17 +21,41 @@ export default function Register() {
       ...form,
       [e.target.name]: e.target.value
     });
+
+    // clear error while typing
+    setError("");
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
 
+    setError("");
+
+    // ✅ Basic validation
+    if (!form.username || !form.email || !form.password) {
+      setError("All fields are required");
+      return;
+    }
+
+    if (form.role === "SELECT") {
+      setError("Please select a role");
+      return;
+    }
+
+    setLoading(true);
+
     try {
-      await axios.post("https://event-management-api-production-94b1.up.railway.app/auth/register", form);
+      await axios.post(
+        "https://event-management-api-production-94b1.up.railway.app/auth/register",
+        form
+      );
+
       navigate("/");
 
     } catch (err) {
-      alert("Registration failed");
+      setError("Registration failed. Try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -43,12 +70,20 @@ export default function Register() {
 
         <form onSubmit={handleRegister} className="space-y-4">
 
+          {/* ERROR MESSAGE */}
+          {error && (
+            <div className="bg-red-100 text-red-600 p-2 rounded text-sm text-center">
+              {error}
+            </div>
+          )}
+
           <input
             type="text"
             name="username"
             placeholder="Username"
             className="w-full p-3 border rounded-lg"
             onChange={handleChange}
+            value={form.username}
           />
 
           <input
@@ -57,6 +92,7 @@ export default function Register() {
             placeholder="Email"
             className="w-full p-3 border rounded-lg"
             onChange={handleChange}
+            value={form.email}
           />
 
           <input
@@ -65,6 +101,7 @@ export default function Register() {
             placeholder="Password"
             className="w-full p-3 border rounded-lg"
             onChange={handleChange}
+            value={form.password}
           />
 
           <select
@@ -74,15 +111,19 @@ export default function Register() {
             value={form.role}
           >
             <option value="SELECT">SELECT ROLE</option>
-            {/* <option value="ADMIN">ADMIN</option> */}
             <option value="ORGANIZER">ORGANIZER</option>
           </select>
 
           <button
             type="submit"
-            className="w-full bg-green-600 text-white p-3 rounded-lg hover:bg-green-700"
+            disabled={loading}
+            className={`w-full p-3 rounded-lg text-white ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-green-600 hover:bg-green-700"
+            }`}
           >
-            Register
+            {loading ? "Registering..." : "Register"}
           </button>
 
         </form>
