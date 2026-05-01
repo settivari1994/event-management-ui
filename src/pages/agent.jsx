@@ -66,30 +66,76 @@ const Organizer = () => {
   };
 
   // ================= WHATSAPP =================
-  const sendWhatsApp = (booking) => {
-    if (!booking?.customerPhone) {
-      toast.error("Phone missing");
-      return;
-    }
+//   const sendWhatsApp = (booking) => {
+//     if (!booking?.customerPhone) {
+//       toast.error("Phone missing");
+//       return;
+//     }
 
-    const phone = booking.customerPhone.replace(/\D/g, "");
+//     const phone = booking.customerPhone.replace(/\D/g, "");
 
-    // 🧾 Build ticket details
-    let itemsText = "";
-    if (booking.items && booking.items.length > 0) {
-      itemsText = booking.items
-        .map(
-          (item) =>
-            `• ${item.categoryName} x${item.quantity} - ₹${item.total}`
-        )
-        .join("\n");
-    }
+//     // 🧾 Build ticket details
+//     let itemsText = "";
+//     if (booking.items && booking.items.length > 0) {
+//       itemsText = booking.items
+//         .map(
+//           (item) =>
+//             `• ${item.categoryName} x${item.quantity} - ₹${item.total}`
+//         )
+//         .join("\n");
+//     }
 
-    // 📅 Format date
-    const date = new Date(booking.bookingTime).toLocaleString();
+//     // 📅 Format date
+//     const date = new Date(booking.bookingTime).toLocaleString();
 
-    // 💬 Final message
-    const message = `🎉 *Booking Confirmed!*
+//     // 💬 Final message
+//     const message = `🎉 *Booking Confirmed!*
+
+// 🆔 Booking ID: ${booking.bookingId}
+// 👤 Customer: ${booking.customerName}
+
+// 🎟️ Tickets:
+// ${itemsText}
+
+// 💰 Total: ₹${booking.totalAmount}
+// 💳 Payment: ${booking.paymentStatus} (${booking.paymentMethod})
+
+// 📅 Date: ${date}
+
+//  Thank you for booking!`;
+
+//     const url = `https://wa.me/91${phone}?text=${encodeURIComponent(message)}`;
+
+//     // 📱 Mobile friendly redirect
+//     window.location.href = url;
+//   };
+
+const sendWhatsApp = (booking) => {
+  if (!booking?.customerPhone) {
+    toast.error("Phone missing");
+    return;
+  }
+
+  const phone = booking.customerPhone.replace(/\D/g, "");
+
+  // 🔗 Ticket URL (IMPORTANT)
+  const ticketUrl = `https://event-management-api-production-94b1.up.railway.app/ticket?bookingId=${booking.bookingId}`;
+
+  // 🧾 Items
+  let itemsText = "";
+  if (booking.items && booking.items.length > 0) {
+    itemsText = booking.items
+      .map(
+        (item) =>
+          `• ${item.categoryName} x${item.quantity} - ₹${item.total}`
+      )
+      .join("\n");
+  }
+
+  const date = new Date(booking.bookingTime).toLocaleString();
+
+  // 💬 Final message (UPDATED)
+  const message = `🎉 *Booking Confirmed!*
 
 🆔 Booking ID: ${booking.bookingId}
 👤 Customer: ${booking.customerName}
@@ -102,13 +148,16 @@ ${itemsText}
 
 📅 Date: ${date}
 
- Thank you for booking!`;
+🎟️ View Ticket:
+${ticketUrl}
 
-    const url = `https://wa.me/91${phone}?text=${encodeURIComponent(message)}`;
+Thank you for booking!`;
 
-    // 📱 Mobile friendly redirect
-    window.location.href = url;
-  };
+  const url = `https://wa.me/91${phone}?text=${encodeURIComponent(message)}`;
+
+  window.location.href = url;
+};
+
 
   // ================= OPEN MODAL =================
   const openSellModal = async (eventId) => {

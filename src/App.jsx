@@ -6,6 +6,8 @@ import Admin from "./pages/admin";
 import ProtectedRoute from "./ProtectedRoute";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import TicketPage from "../src/pages/components/Ticket";
+
 
 
 
@@ -27,6 +29,7 @@ export default function App() {
         <Route path="/" element={<Login />} />
 
         <Route path="/register" element={<Register />} />
+        <Route path="/ticket" element={<TicketPage />} />
 
         <Route
           path="/admin"
