@@ -119,7 +119,7 @@ const sendWhatsApp = (booking) => {
   const phone = booking.customerPhone.replace(/\D/g, "");
 
   // 🔗 Ticket URL (IMPORTANT)
-  const ticketUrl = `https://event-management-api-production-94b1.up.railway.app/ticket?bookingId=${booking.bookingId}`;
+  const ticketUrl = `https://www.eventguide.in/ticket?bookingId=${booking.bookingId}`;
 
   // 🧾 Items
   let itemsText = "";
