@@ -358,7 +358,7 @@ Thank you for booking!`;
 
       {/* SELL MODAL */}
       {showSellModal && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center overflow-y-auto ">
           <div className="bg-white p-5 rounded w-[520px] relative">
 
             <button onClick={() => setShowSellModal(false)} className="absolute right-2 top-2">
@@ -425,7 +425,7 @@ Thank you for booking!`;
                   Scan & Pay ₹{getDiscountedTotal()}
                 </p>
 
-                <QRCodeCanvas value={getUpiValue()} size={180} />
+                <QRCodeCanvas value={getUpiValue()} size={90} />
 
                 <p className="text-xs mt-2 text-gray-500">{upiId}</p>
               </div>

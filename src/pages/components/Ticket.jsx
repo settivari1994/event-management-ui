@@ -36,10 +36,10 @@ function Ticket() {
         {/* HEADER */}
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 sm:p-5">
           <h2 className="text-lg sm:text-xl md:text-2xl font-bold">
-            {booking.eventName}
+              {booking.event?.eventName}
           </h2>
           <p className="text-xs sm:text-sm opacity-90">
-            {booking.venueName}
+              {booking.event?.venueName}
           </p>
         </div>
 
