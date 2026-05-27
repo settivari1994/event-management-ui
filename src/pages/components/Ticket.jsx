@@ -188,17 +188,6 @@ function Ticket() {
                   </span>
                 </div>
 
-                {/* TOTAL */}
-                <div className="flex justify-between text-xs sm:text-sm mb-1">
-                  <span className="text-gray-500">
-                    Total Amount
-                  </span>
-
-                  <span className="font-semibold">
-                    ₹{item.total}
-                  </span>
-                </div>
-
               </div>
             ))}
 
@@ -275,3 +264,5 @@ function Ticket() {
 }
 
 export default Ticket;
+
+

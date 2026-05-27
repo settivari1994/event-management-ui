@@ -461,7 +461,7 @@ Thank you for booking!`;
 
             {selectedCoupon && (
               <div className="text-green-600 font-bold">
-                Discounted: ₹{getDiscountedTotal()}
+                Discounted Price: ₹{getDiscountedTotal()}
               </div>
             )}
 
