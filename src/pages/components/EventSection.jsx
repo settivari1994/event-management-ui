@@ -464,7 +464,7 @@ const EventSection = () => {
             </button>
 
             <div className="mt-4 max-h-40 overflow-auto">
-              {coupons.map((c) => (
+              {coupons.filter((c) => c.active).map((c) => (
                 <div key={c.id} className="border p-2 mt-2 rounded flex justify-between">
                   <span>{c.code} - {c.discountPercentage}%</span>
                   <div className="flex gap-2">

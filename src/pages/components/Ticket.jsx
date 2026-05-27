@@ -253,22 +253,34 @@ function Ticket() {
                 {/* PRICE */}
                 <div className="flex justify-between text-xs sm:text-sm mb-1">
                   <span className="text-gray-500">
-                    Price
+                    Total Amount
                   </span>
 
                   <span className="font-semibold">
-                    ₹{item.price}
+                    ₹{item.totalAmount}
                   </span>
                 </div>
 
-                {/* TOTAL */}
+                {/* DISCOUNT */}
                 <div className="flex justify-between text-xs sm:text-sm">
                   <span className="text-gray-500">
-                    Total
+                    Discount Amount
                   </span>
 
                   <span className="font-semibold text-green-600">
-                    ₹{item.total}
+                    ₹{item.discount}
+                  </span>
+                </div>
+
+
+                
+                {/* Final Amount  */}
+                <div className="flex justify-between text-xs sm:text-sm">
+                  <span className="text-gray-500">
+                    Final Amount
+                  </span>
+                  <span className="font-semibold text-green-600">
+                    ₹{item.finalAmount}
                   </span>
                 </div>
 
