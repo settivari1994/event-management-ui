@@ -12,24 +12,6 @@ export default function EventGuideLandingPage() {
     "Technology Solutions",
   ];
 
-  const upcomingEvents = [
-    {
-      title: "IPL Fan Fest 2026",
-      location: "Bangalore",
-      date: "June 12, 2026",
-    },
-    {
-      title: "College Tech Carnival",
-      location: "Hyderabad",
-      date: "July 04, 2026",
-    },
-    {
-      title: "Corporate Leadership Summit",
-      location: "Mumbai",
-      date: "August 20, 2026",
-    },
-  ];
-
   const testimonials = [
     {
       name: "Rahul Sharma",
@@ -56,30 +38,35 @@ export default function EventGuideLandingPage() {
 
       {/* HEADER */}
       <header className="sticky top-0 z-50 bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+
           <div className="flex items-center justify-between h-20">
 
             {/* LOGO */}
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center shadow-md">
-                <span className="text-white text-xl font-bold">
+
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center shadow-md">
+                <span className="text-white text-lg sm:text-xl font-bold">
                   EG
                 </span>
               </div>
 
               <div>
-                <h1 className="text-2xl font-bold text-blue-600 leading-none">
+                <h1 className="text-lg sm:text-2xl font-bold text-blue-600 leading-none">
                   EventGuide
                 </h1>
 
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-[10px] sm:text-xs text-gray-500 mt-1">
                   Pvt Ltd
                 </p>
               </div>
+
             </div>
 
             {/* NAVIGATION */}
             <nav className="hidden lg:flex items-center gap-6 text-sm font-medium">
+
               <a href="#home" className="hover:text-blue-600">
                 Home
               </a>
@@ -92,30 +79,35 @@ export default function EventGuideLandingPage() {
                 Services
               </a>
 
-              <a href="#portfolio" className="hover:text-blue-600">
-                Portfolio
-              </a>
-
               <a href="#contact" className="hover:text-blue-600">
                 Contact
               </a>
+
             </nav>
 
-            {/* HEADER BUTTONS */}
-            <div className="hidden md:flex items-center gap-3">
-            <Link  to="/login" className="px-4 py-2 rounded-xl border border-blue-600 text-blue-600 hover:bg-blue-50 transition">
-             Login
-             </Link>
+            {/* BUTTONS */}
+            <div className="flex items-center gap-2 sm:gap-3">
+
+              <Link
+                to="/login"
+                className="px-3 sm:px-4 py-2 rounded-xl border border-blue-600 text-blue-600 hover:bg-blue-50 transition text-xs sm:text-sm whitespace-nowrap"
+              >
+                Login
+              </Link>
+
               <a
                 href="#contact"
-                className="px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition"
+                className="px-3 sm:px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition text-xs sm:text-sm whitespace-nowrap"
               >
                 Book Consultation
               </a>
+
             </div>
 
           </div>
+
         </div>
+
       </header>
 
       {/* HERO SECTION */}
@@ -123,16 +115,19 @@ export default function EventGuideLandingPage() {
         id="home"
         className="bg-gradient-to-r from-blue-600 to-purple-600 text-white"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-32">
 
           <div className="grid lg:grid-cols-2 gap-12 items-center">
 
+            {/* LEFT */}
             <div>
-              <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-6">
+
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-6">
                 Creating Unforgettable Events & Experiences
               </h2>
 
-              <p className="text-lg text-blue-100 mb-8">
+              <p className="text-base sm:text-lg text-blue-100 mb-8">
                 We specialize in event management, sports management,
                 fan engagement, ticketing solutions, and premium event
                 production across India.
@@ -142,75 +137,79 @@ export default function EventGuideLandingPage() {
 
                 <a
                   href="#contact"
-                  className="bg-white text-blue-600 px-6 py-3 rounded-2xl font-semibold hover:bg-gray-100 transition"
+                  className="bg-white text-blue-600 px-5 sm:px-6 py-3 rounded-2xl font-semibold hover:bg-gray-100 transition text-sm sm:text-base"
                 >
                   Contact Us
                 </a>
 
                 <a
                   href="#services"
-                  className="border border-white px-6 py-3 rounded-2xl font-semibold hover:bg-white hover:text-blue-600 transition"
+                  className="border border-white px-5 sm:px-6 py-3 rounded-2xl font-semibold hover:bg-white hover:text-blue-600 transition text-sm sm:text-base"
                 >
                   Explore Services
                 </a>
 
               </div>
+
             </div>
 
-            {/* STATS */}
-            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl">
+            {/* RIGHT STATS */}
+            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-2xl">
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-4 sm:gap-6">
 
-                <div className="bg-white/10 rounded-2xl p-6 text-center">
-                  <h3 className="text-3xl font-bold">
+                <div className="bg-white/10 rounded-2xl p-5 text-center">
+                  <h3 className="text-2xl sm:text-3xl font-bold">
                     500+
                   </h3>
 
-                  <p className="text-sm mt-2">
+                  <p className="text-xs sm:text-sm mt-2">
                     Events Managed
                   </p>
                 </div>
 
-                <div className="bg-white/10 rounded-2xl p-6 text-center">
-                  <h3 className="text-3xl font-bold">
+                <div className="bg-white/10 rounded-2xl p-5 text-center">
+                  <h3 className="text-2xl sm:text-3xl font-bold">
                     1M+
                   </h3>
 
-                  <p className="text-sm mt-2">
+                  <p className="text-xs sm:text-sm mt-2">
                     Tickets Processed
                   </p>
                 </div>
 
-                <div className="bg-white/10 rounded-2xl p-6 text-center">
-                  <h3 className="text-3xl font-bold">
+                <div className="bg-white/10 rounded-2xl p-5 text-center">
+                  <h3 className="text-2xl sm:text-3xl font-bold">
                     100+
                   </h3>
 
-                  <p className="text-sm mt-2">
+                  <p className="text-xs sm:text-sm mt-2">
                     Corporate Clients
                   </p>
                 </div>
 
-                <div className="bg-white/10 rounded-2xl p-6 text-center">
-                  <h3 className="text-3xl font-bold">
+                <div className="bg-white/10 rounded-2xl p-5 text-center">
+                  <h3 className="text-2xl sm:text-3xl font-bold">
                     24/7
                   </h3>
 
-                  <p className="text-sm mt-2">
+                  <p className="text-xs sm:text-sm mt-2">
                     Support Team
                   </p>
                 </div>
 
               </div>
+
             </div>
 
           </div>
+
         </div>
+
       </section>
 
       {/* ABOUT */}
-      <section id="about" className="py-20 bg-gray-50">
+      <section id="about" className="py-16 sm:py-20 bg-gray-50">
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -219,11 +218,12 @@ export default function EventGuideLandingPage() {
             <img
               src="https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=1200&auto=format&fit=crop"
               alt="event"
-              className="rounded-3xl shadow-lg w-full h-[400px] object-cover"
+              className="rounded-3xl shadow-lg w-full h-[300px] sm:h-[400px] object-cover"
             />
 
             <div>
-              <h2 className="text-4xl font-bold mb-6">
+
+              <h2 className="text-3xl sm:text-4xl font-bold mb-6">
                 About EventGuide
               </h2>
 
@@ -256,19 +256,23 @@ export default function EventGuideLandingPage() {
                 </div>
 
               </div>
+
             </div>
 
           </div>
+
         </div>
+
       </section>
 
       {/* SERVICES */}
-      <section id="services" className="py-20">
+      <section id="services" className="py-16 sm:py-20">
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <div className="text-center mb-14">
-            <h2 className="text-4xl font-bold mb-4">
+
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
               Our Services
             </h2>
 
@@ -276,6 +280,7 @@ export default function EventGuideLandingPage() {
               End-to-end event and engagement solutions tailored
               for modern businesses and audiences.
             </p>
+
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -285,6 +290,7 @@ export default function EventGuideLandingPage() {
                 key={index}
                 className="bg-white border rounded-3xl p-6 shadow-sm hover:shadow-xl transition duration-300"
               >
+
                 <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xl mb-4">
                   {index + 1}
                 </div>
@@ -296,26 +302,31 @@ export default function EventGuideLandingPage() {
                 <p className="text-sm text-gray-600 leading-6">
                   Professional solutions designed to ensure smooth execution.
                 </p>
+
               </div>
             ))}
 
           </div>
+
         </div>
+
       </section>
 
       {/* TESTIMONIALS */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-16 sm:py-20 bg-gray-50">
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <div className="text-center mb-14">
-            <h2 className="text-4xl font-bold mb-4">
+
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
               Testimonials
             </h2>
 
             <p className="text-gray-600">
               What our clients say about our services.
             </p>
+
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -325,6 +336,7 @@ export default function EventGuideLandingPage() {
                 key={index}
                 className="bg-white rounded-3xl p-8 shadow-sm"
               >
+
                 <p className="text-gray-600 leading-7 mb-6">
                   “{testimonial.review}”
                 </p>
@@ -338,22 +350,26 @@ export default function EventGuideLandingPage() {
                     {testimonial.company}
                   </p>
                 </div>
+
               </div>
             ))}
 
           </div>
+
         </div>
+
       </section>
 
       {/* CONTACT */}
-      <section id="contact" className="py-20">
+      <section id="contact" className="py-16 sm:py-20">
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <div className="grid lg:grid-cols-2 gap-12">
 
             <div>
-              <h2 className="text-4xl font-bold mb-6">
+
+              <h2 className="text-3xl sm:text-4xl font-bold mb-6">
                 Contact Us
               </h2>
 
@@ -367,6 +383,7 @@ export default function EventGuideLandingPage() {
                 <p>📞 +91 9876543210</p>
                 <p>✉️ contact@eventguide.com</p>
               </div>
+
             </div>
 
             <div className="bg-gray-50 rounded-3xl p-8 shadow-sm">
@@ -396,10 +413,13 @@ export default function EventGuideLandingPage() {
                 </button>
 
               </div>
+
             </div>
 
           </div>
+
         </div>
+
       </section>
 
       {/* FOOTER */}
@@ -410,6 +430,7 @@ export default function EventGuideLandingPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
 
             <div>
+
               <h3 className="text-2xl font-bold text-white mb-4">
                 EventGuide
               </h3>
@@ -417,9 +438,11 @@ export default function EventGuideLandingPage() {
               <p className="text-sm leading-7 text-gray-400">
                 Premium event management and technology solutions.
               </p>
+
             </div>
 
             <div>
+
               <h4 className="text-lg font-semibold text-white mb-4">
                 Quick Links
               </h4>
@@ -427,12 +450,13 @@ export default function EventGuideLandingPage() {
               <ul className="space-y-3 text-sm">
                 <li>About Us</li>
                 <li>Services</li>
-                <li>Portfolio</li>
                 <li>Contact</li>
               </ul>
+
             </div>
 
             <div>
+
               <h4 className="text-lg font-semibold text-white mb-4">
                 Policies
               </h4>
@@ -442,14 +466,17 @@ export default function EventGuideLandingPage() {
                 <li>Terms & Conditions</li>
                 <li>Refund Policy</li>
               </ul>
+
             </div>
 
             <div>
+
               <h4 className="text-lg font-semibold text-white mb-4">
                 Follow Us
               </h4>
 
-              <div className="flex gap-4 text-sm">
+              <div className="flex gap-4 text-sm flex-wrap">
+
                 <span className="bg-gray-800 px-4 py-2 rounded-xl">
                   Facebook
                 </span>
@@ -461,7 +488,9 @@ export default function EventGuideLandingPage() {
                 <span className="bg-gray-800 px-4 py-2 rounded-xl">
                   LinkedIn
                 </span>
+
               </div>
+
             </div>
 
           </div>
@@ -471,6 +500,7 @@ export default function EventGuideLandingPage() {
           </div>
 
         </div>
+
       </footer>
 
     </div>
