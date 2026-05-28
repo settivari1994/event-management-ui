@@ -7,6 +7,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TicketPage from "../src/pages/components/Ticket";
+import EventGuideLandingPage from "./pages/landingPage";
 
 
 
@@ -26,8 +27,8 @@ export default function App() {
     <BrowserRouter>
       <Routes>
 
-        <Route path="/" element={<Login />} />
-
+        <Route path="/" element={<EventGuideLandingPage />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/ticket" element={<TicketPage />} />
 
