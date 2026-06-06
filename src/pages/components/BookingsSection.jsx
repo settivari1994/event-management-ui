@@ -6,7 +6,6 @@ import { saveAs } from "file-saver";
 const BookingsSection = () => {
   const [bookings, setBookings] = useState([]);
   const [search, setSearch] = useState("");
-
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
 
@@ -33,124 +32,177 @@ const BookingsSection = () => {
     fetchBookings();
   }, []);
 
-  // ================= FILTER =================
+  // ================= SEARCH FILTER =================
   const tableBookings = bookings.filter((b) =>
-    `${b.bookingId} ${b.customerName} ${b.customerPhone}`
+    `${b.bookingId}
+     ${b.customerName}
+     ${b.customerPhone}
+     ${b.paymentMethod}
+     ${b.paymentStatus}`
       .toLowerCase()
       .includes(search.toLowerCase())
   );
 
+  // ================= DATE FILTER FOR STATS =================
   const statsBookings = bookings.filter((b) => {
     const bookingDate = new Date(b.bookingTime);
-    const matchFrom = fromDate ? bookingDate >= new Date(fromDate) : true;
-    const matchTo = toDate ? bookingDate <= new Date(toDate) : true;
+
+    const matchFrom = fromDate
+      ? bookingDate >= new Date(fromDate)
+      : true;
+
+    const matchTo = toDate
+      ? bookingDate <= new Date(toDate + "T23:59:59")
+      : true;
+
     return matchFrom && matchTo;
   });
 
-  // ================= STATS =================
+  // ================= DASHBOARD STATS =================
   const totalBookings = statsBookings.length;
 
   const totalRevenue = statsBookings.reduce(
-    (sum, b) => sum + (b.totalAmount || 0),
+    (sum, booking) => sum + (booking.totalAmount || 0),
     0
   );
 
-  const paidAmount = statsBookings
-    .filter((b) => b.paymentStatus === "PAID")
-    .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+  const totalDiscount = statsBookings.reduce(
+    (sum, booking) => sum + (booking.discount || 0),
+    0
+  );
 
-  const pendingAmount = statsBookings
-    .filter((b) => b.paymentStatus !== "PAID")
-    .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+  const finalRevenue = statsBookings.reduce(
+    (sum, booking) =>
+      sum +
+      (booking.finalAmount > 0
+        ? booking.finalAmount
+        : booking.totalAmount),
+    0
+  );
 
-  // ================= EXCEL =================
+  // ================= EXCEL EXPORT =================
   const downloadExcel = () => {
-    const data = [];
+    const excelData = [];
 
-    tableBookings.forEach((b) => {
-      if (b.items && b.items.length > 0) {
-        b.items.forEach((item) => {
-          data.push({
-            ...b,
-            categoryName: item.categoryName,
-            quantity: item.quantity,
-            price: item.price,
+    tableBookings.forEach((booking) => {
+      if (booking.items?.length > 0) {
+        booking.items.forEach((item) => {
+          excelData.push({
+            BookingID: booking.bookingId,
+            BookingEvent:booking.event.eventName,
+            CustomerName: booking.customerName,
+            CustomerPhone: booking.customerPhone,
+            TicketCategory: item.categoryName,
+            TicketQuantity: item.quantity,
+            TotalAmount: booking.totalAmount,
+            Discount: booking.discount,
+            FinalAmount:
+              booking.finalAmount > 0
+                ? booking.finalAmount
+                : booking.totalAmount,
+            PaymentStatus: booking.paymentStatus,
+            PaymentMethod: booking.paymentMethod,
           });
         });
-      } else {
-        data.push({ ...b });
       }
     });
 
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
+    const worksheet =
+      XLSX.utils.json_to_sheet(excelData);
 
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Bookings");
+    const workbook =
+      XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      "Bookings"
+    );
 
     const excelBuffer = XLSX.write(workbook, {
       bookType: "xlsx",
       type: "array",
     });
 
-    saveAs(new Blob([excelBuffer]), "Bookings_Report.xlsx");
+    const file = new Blob([excelBuffer], {
+      type: "application/octet-stream",
+    });
+
+    saveAs(file, "Bookings_Report.xlsx");
   };
 
   return (
-    <div className="p-3 sm:p-4">
+    <div className="p-4">
 
-      {/* ================= STATS ================= */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+      {/* ================= DASHBOARD ================= */}
 
-        <div className="bg-blue-500 text-white p-4 rounded shadow">
-          <h3>Total Bookings</h3>
-          <p className="text-xl font-bold">{totalBookings}</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+
+        <div className="bg-blue-500 text-white rounded p-4 shadow">
+          <h3 className="text-sm">Total Bookings</h3>
+          <p className="text-2xl font-bold">
+            {totalBookings}
+          </p>
         </div>
 
-        <div className="bg-green-500 text-white p-4 rounded shadow">
-          <h3>Total Revenue</h3>
-          <p className="text-xl font-bold">₹{totalRevenue}</p>
+        <div className="bg-green-600 text-white rounded p-4 shadow">
+          <h3 className="text-sm">Total Revenue</h3>
+          <p className="text-2xl font-bold">
+            ₹{totalRevenue}
+          </p>
         </div>
 
-        <div className="bg-emerald-600 text-white p-4 rounded shadow">
-          <h3>Paid</h3>
-          <p className="text-xl font-bold">₹{paidAmount}</p>
+        <div className="bg-yellow-500 text-white rounded p-4 shadow">
+          <h3 className="text-sm">Discount Given</h3>
+          <p className="text-2xl font-bold">
+            ₹{totalDiscount}
+          </p>
         </div>
 
-        <div className="bg-red-500 text-white p-4 rounded shadow">
-          <h3>Pending</h3>
-          <p className="text-xl font-bold">₹{pendingAmount}</p>
+        <div className="bg-purple-600 text-white rounded p-4 shadow">
+          <h3 className="text-sm">Final Revenue</h3>
+          <p className="text-2xl font-bold">
+            ₹{finalRevenue}
+          </p>
         </div>
 
       </div>
 
-      {/* ================= FILTER ================= */}
-      <div className="flex flex-col sm:flex-row flex-wrap gap-3 mb-4">
+      {/* ================= FILTERS ================= */}
+
+      <div className="flex flex-wrap gap-3 mb-5">
 
         <input
           type="text"
-          placeholder="Search..."
-          className="border p-2 rounded w-full sm:w-64"
+          placeholder="Search Booking..."
+          className="border rounded p-2 w-64"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) =>
+            setSearch(e.target.value)
+          }
         />
 
         <input
           type="date"
-          className="border p-2 rounded w-full sm:w-auto"
+          className="border rounded p-2"
           value={fromDate}
-          onChange={(e) => setFromDate(e.target.value)}
+          onChange={(e) =>
+            setFromDate(e.target.value)
+          }
         />
 
         <input
           type="date"
-          className="border p-2 rounded w-full sm:w-auto"
+          className="border rounded p-2"
           value={toDate}
-          onChange={(e) => setToDate(e.target.value)}
+          onChange={(e) =>
+            setToDate(e.target.value)
+          }
         />
 
         <button
           onClick={downloadExcel}
-          className="bg-green-600 text-white px-4 py-2 rounded w-full sm:w-auto"
+          className="bg-green-600 text-white px-4 py-2 rounded"
         >
           Download Excel
         </button>
@@ -158,66 +210,156 @@ const BookingsSection = () => {
       </div>
 
       {/* ================= TABLE ================= */}
-      <div className="bg-white rounded shadow overflow-auto">
 
-        <div className="overflow-auto">
-          <table className="min-w-[700px] w-full border text-sm">
+     {/* ================= TABLE ================= */}
 
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="p-2 border">ID</th>
-                <th className="p-2 border">Customer</th>
-                <th className="p-2 border">Phone</th>
-                <th className="p-2 border">Amount</th>
-                <th className="p-2 border">Payment</th>
-                <th className="p-2 border">Method</th>
-                <th className="p-2 border">Date</th>
-              </tr>
-            </thead>
+<div className="bg-white rounded-xl shadow border">
 
-            <tbody>
-              {tableBookings.length === 0 ? (
-                <tr>
-                  <td colSpan="7" className="text-center p-4">
-                    No bookings found
-                  </td>
-                </tr>
-              ) : (
-                tableBookings.map((b) => (
-                  <tr key={b.bookingId} className="text-center">
+  <div className="max-h-[70vh] overflow-auto">
 
-                    <td className="p-2 border">{b.bookingId}</td>
-                    <td className="p-2 border">{b.customerName}</td>
-                    <td className="p-2 border">{b.customerPhone}</td>
-                    <td className="p-2 border">₹{b.totalAmount}</td>
+    <table className="w-full min-w-[1200px] border-collapse text-sm">
 
-                    <td className="p-2 border">
-                      <span
-                        className={`px-2 py-1 text-white text-xs rounded ${
-                          b.paymentStatus === "PAID"
-                            ? "bg-green-500"
-                            : "bg-red-500"
-                        }`}
-                      >
-                        {b.paymentStatus}
-                      </span>
-                    </td>
+      <thead className="bg-gray-100 sticky top-0 z-10">
 
-                    <td className="p-2 border">{b.paymentMethod}</td>
+        <tr>
 
-                    <td className="p-2 border">
-                      {new Date(b.bookingTime).toLocaleString()}
-                    </td>
+          <th className="border p-3 whitespace-nowrap">
+            Booking ID
+          </th>
 
-                  </tr>
-                ))
-              )}
-            </tbody>
+          <th className="border p-3 whitespace-nowrap">
+            Event Name
+          </th>
 
-          </table>
-        </div>
+          <th className="border p-3 whitespace-nowrap">
+            Customer Name
+          </th>
 
-      </div>
+          <th className="border p-3 whitespace-nowrap">
+            Customer Phone
+          </th>
+
+          <th className="border p-3 whitespace-nowrap">
+            Ticket Category
+          </th>
+
+          <th className="border p-3 whitespace-nowrap text-center">
+            Qty
+          </th>
+
+          <th className="border p-3 whitespace-nowrap text-right">
+            Total Amount
+          </th>
+
+          <th className="border p-3 whitespace-nowrap text-right">
+            Discount
+          </th>
+
+          <th className="border p-3 whitespace-nowrap text-right">
+            Final Amount
+          </th>
+
+          <th className="border p-3 whitespace-nowrap text-center">
+            Payment Status
+          </th>
+
+          <th className="border p-3 whitespace-nowrap hidden lg:table-cell">
+            Payment Method
+          </th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        {tableBookings.length === 0 ? (
+          <tr>
+            <td
+              colSpan="11"
+              className="text-center p-6"
+            >
+              No Bookings Found
+            </td>
+          </tr>
+        ) : (
+          tableBookings.map((booking) => (
+            <tr
+              key={booking.bookingId}
+              className="hover:bg-blue-50 transition-colors"
+            >
+              <td className="border p-3 text-center">
+                {booking.bookingId}
+              </td>
+
+               <td className="border p-3 text-center">
+                  {booking.event?.eventName}
+              </td>
+
+              <td className="border p-3 font-medium">
+                {booking.customerName}
+              </td>
+
+              <td className="border p-3">
+                {booking.customerPhone}
+              </td>
+
+              <td className="border p-3">
+                {booking.items
+                  ?.map((item) => item.categoryName)
+                  .join(", ")}
+              </td>
+
+              <td className="border p-3 text-center">
+                {booking.items?.reduce(
+                  (sum, item) => sum + item.quantity,
+                  0
+                )}
+              </td>
+
+              <td className="border p-3 text-right">
+                ₹{booking.totalAmount}
+              </td>
+
+              <td className="border p-3 text-right text-red-600">
+                ₹{booking.discount || 0}
+              </td>
+
+              <td className="border p-3 text-right text-green-600 font-bold">
+                ₹
+                {booking.finalAmount > 0
+                  ? booking.finalAmount
+                  : booking.totalAmount}
+              </td>
+
+              <td className="border p-3 text-center">
+
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                    booking.paymentStatus === "PAID"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {booking.paymentStatus}
+                </span>
+
+              </td>
+
+              <td className="border p-3 text-center hidden lg:table-cell">
+                {booking.paymentMethod}
+              </td>
+
+            </tr>
+          ))
+        )}
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
 
     </div>
   );
