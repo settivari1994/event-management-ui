@@ -6,7 +6,6 @@ export default function Register() {
 
   const [form, setForm] = useState({
     username: "",
-    email: "",
     password: "",
     role: "SELECT"
   });
@@ -32,7 +31,7 @@ export default function Register() {
     setError("");
 
     // ✅ Basic validation
-    if (!form.username || !form.email || !form.password) {
+    if (!form.username || !form.password) {
       setError("All fields are required");
       return;
     }
@@ -84,15 +83,6 @@ export default function Register() {
             className="w-full p-3 border rounded-lg"
             onChange={handleChange}
             value={form.username}
-          />
-
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            className="w-full p-3 border rounded-lg"
-            onChange={handleChange}
-            value={form.email}
           />
 
           <input
