@@ -12,6 +12,33 @@ export default function EventGuideLandingPage() {
     "Technology Solutions",
   ];
 
+const clients = [
+  {
+    name: "Swiggy",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/1/13/Swiggy_logo.png",
+  },
+  {
+    name: "Zomato",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/7/75/Zomato_logo.png",
+  },
+  {
+    name: "IPL",
+    logo: "https://cdn-icons-png.flaticon.com/512/857/857455.png",
+  },
+  {
+    name: "Pro Kabaddi League",
+    logo: "https://cdn-icons-png.flaticon.com/512/857/857418.png",
+  },
+  {
+    name: "Corporate Cricket League",
+    logo: "https://cdn-icons-png.flaticon.com/512/3063/3063822.png",
+  },
+  {
+    name: "Marathon Events",
+    logo: "https://cdn-icons-png.flaticon.com/512/2936/2936886.png",
+  },
+];
+
   const testimonials = [
     {
       name: "Rahul Sharma",
@@ -77,6 +104,10 @@ export default function EventGuideLandingPage() {
 
               <a href="#services" className="hover:text-blue-600">
                 Services
+              </a>
+
+              <a href="#clients" className="hover:text-blue-600">
+                Clients
               </a>
 
               <a href="#contact" className="hover:text-blue-600">
@@ -350,6 +381,50 @@ export default function EventGuideLandingPage() {
                     {testimonial.company}
                   </p>
                 </div>
+
+              </div>
+            ))}
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <section id="clients" className="py-20 bg-white">
+
+        <div className="max-w-7xl mx-auto px-4">
+
+          <div className="text-center mb-14">
+
+            <h2 className="text-4xl font-bold mb-4">
+              Trusted By Leading Brands
+            </h2>
+
+            <p className="text-gray-600">
+              Delivering successful events for startups,
+              enterprises and sports organizations.
+            </p>
+
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+
+            {clients.map((client, index) => (
+              <div
+                key={index}
+                className="bg-white border rounded-3xl p-6 shadow-sm hover:shadow-lg transition"
+              >
+
+                <img
+                  src={client.logo}
+                  alt={client.name}
+                  className="h-16 w-full object-contain"
+                />
+
+                <p className="text-center mt-4 font-medium">
+                  {client.name}
+                </p>
 
               </div>
             ))}
