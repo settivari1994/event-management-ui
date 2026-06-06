@@ -414,7 +414,7 @@ const EventSection = () => {
           <div className="bg-white p-5 rounded w-96 relative">
             <button onClick={() => setShowAssignModal(false)} className="absolute top-2 right-2"><X /></button>
 
-            <h2 className="font-bold mb-3">Organisers List</h2>
+            <h2 className="font-bold mb-3">Agent List</h2>
 
             {organisers.map((o) => (
               <label key={o.id} className="flex justify-between items-center mb-2">

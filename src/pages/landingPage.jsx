@@ -379,9 +379,9 @@ export default function EventGuideLandingPage() {
               </p>
 
               <div className="space-y-4 text-gray-700">
-                <p>📍 Bangalore, India</p>
-                <p>📞 +91 9876543210</p>
-                <p>✉️ contact@eventguide.com</p>
+                <p>📍Event Guide Private limited Aspire Coworks,472/7,2nd & 3rd Floor ,Balaji Arcade,20th L Cross Rd,4th Block,Koramangala,Bengaluru-560095</p>
+                <p>📞 +91 9202332003</p>
+                <p>✉️ hg@eventguide.com</p>
               </div>
 
             </div>

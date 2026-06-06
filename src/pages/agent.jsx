@@ -365,8 +365,6 @@ Thank you for booking!`;
               <X />
             </button>
 
-            <h2 className="text-lg font-bold mb-3">Sell Tickets</h2>
-
             <input
               placeholder="Customer Name"
               className="border w-full p-2 mb-2"
@@ -409,28 +407,6 @@ Thank you for booking!`;
               )}
             </select>
 
-            <select
-              className="border w-full p-2 mb-3"
-              value={paymentMethod}
-              onChange={(e) => setPaymentMethod(e.target.value)}
-            >
-              <option value="CASH">Cash</option>
-              <option value="UPI">UPI</option>
-              <option value="POS">POS</option>
-            </select>
-
-            {paymentMethod === "UPI" && upiId && (
-              <div className="flex flex-col items-center my-3">
-                <p className="text-sm font-semibold mb-2">
-                  Scan & Pay ₹{getDiscountedTotal()}
-                </p>
-
-                <QRCodeCanvas value={getUpiValue()} size={90} />
-
-                <p className="text-xs mt-2 text-gray-500">{upiId}</p>
-              </div>
-            )}
-
             <div className="max-h-48 overflow-auto space-y-2">
               {categories.map((cat) => (
                 <div key={cat.id} className="flex justify-between border p-2 rounded">
@@ -465,11 +441,33 @@ Thank you for booking!`;
               </div>
             )}
 
+            <select
+              className="border w-full p-2 mb-3"
+              value={paymentMethod}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+            >
+              <option value="CASH">Cash</option>
+              <option value="UPI">UPI</option>
+              <option value="POS">POS</option>
+            </select>
+
+            {paymentMethod === "UPI" && upiId && (
+              <div className="flex flex-col items-center my-3">
+                <p className="text-sm font-semibold mb-2">
+                  Scan & Pay ₹{getDiscountedTotal()}
+                </p>
+
+                <QRCodeCanvas value={getUpiValue()} size={90} />
+
+                <p className="text-xs mt-2 text-gray-500">{upiId}</p>
+              </div>
+            )}
+
             <button
               onClick={handleSellTickets}
               className="w-full bg-blue-600 text-white py-2 mt-3 rounded"
             >
-              Sell
+              Sell Ticket
             </button>
 
           </div>
