@@ -33,6 +33,8 @@ const Organizer = () => {
 
   // ===== UPI ID =====
   const [upiId, setUpiId] = useState("");
+  const [gstPercentage, setGstPercentage] = useState(0);
+  const [appServiceCharge, setAppServiceCharge] = useState(0);
 
   // ===== SUCCESS MODAL =====
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -66,76 +68,76 @@ const Organizer = () => {
   };
 
   // ================= WHATSAPP =================
-//   const sendWhatsApp = (booking) => {
-//     if (!booking?.customerPhone) {
-//       toast.error("Phone missing");
-//       return;
-//     }
+  //   const sendWhatsApp = (booking) => {
+  //     if (!booking?.customerPhone) {
+  //       toast.error("Phone missing");
+  //       return;
+  //     }
 
-//     const phone = booking.customerPhone.replace(/\D/g, "");
+  //     const phone = booking.customerPhone.replace(/\D/g, "");
 
-//     // 🧾 Build ticket details
-//     let itemsText = "";
-//     if (booking.items && booking.items.length > 0) {
-//       itemsText = booking.items
-//         .map(
-//           (item) =>
-//             `• ${item.categoryName} x${item.quantity} - ₹${item.total}`
-//         )
-//         .join("\n");
-//     }
+  //     // 🧾 Build ticket details
+  //     let itemsText = "";
+  //     if (booking.items && booking.items.length > 0) {
+  //       itemsText = booking.items
+  //         .map(
+  //           (item) =>
+  //             `• ${item.categoryName} x${item.quantity} - ₹${item.total}`
+  //         )
+  //         .join("\n");
+  //     }
 
-//     // 📅 Format date
-//     const date = new Date(booking.bookingTime).toLocaleString();
+  //     // 📅 Format date
+  //     const date = new Date(booking.bookingTime).toLocaleString();
 
-//     // 💬 Final message
-//     const message = `🎉 *Booking Confirmed!*
+  //     // 💬 Final message
+  //     const message = `🎉 *Booking Confirmed!*
 
-// 🆔 Booking ID: ${booking.bookingId}
-// 👤 Customer: ${booking.customerName}
+  // 🆔 Booking ID: ${booking.bookingId}
+  // 👤 Customer: ${booking.customerName}
 
-// 🎟️ Tickets:
-// ${itemsText}
+  // 🎟️ Tickets:
+  // ${itemsText}
 
-// 💰 Total: ₹${booking.totalAmount}
-// 💳 Payment: ${booking.paymentStatus} (${booking.paymentMethod})
+  // 💰 Total: ₹${booking.totalAmount}
+  // 💳 Payment: ${booking.paymentStatus} (${booking.paymentMethod})
 
-// 📅 Date: ${date}
+  // 📅 Date: ${date}
 
-//  Thank you for booking!`;
+  //  Thank you for booking!`;
 
-//     const url = `https://wa.me/91${phone}?text=${encodeURIComponent(message)}`;
+  //     const url = `https://wa.me/91${phone}?text=${encodeURIComponent(message)}`;
 
-//     // 📱 Mobile friendly redirect
-//     window.location.href = url;
-//   };
+  //     // 📱 Mobile friendly redirect
+  //     window.location.href = url;
+  //   };
 
-const sendWhatsApp = (booking) => {
-  if (!booking?.customerPhone) {
-    toast.error("Phone missing");
-    return;
-  }
+  const sendWhatsApp = (booking) => {
+    if (!booking?.customerPhone) {
+      toast.error("Phone missing");
+      return;
+    }
 
-  const phone = booking.customerPhone.replace(/\D/g, "");
+    const phone = booking.customerPhone.replace(/\D/g, "");
 
-  // 🔗 Ticket URL (IMPORTANT)
-  const ticketUrl = `https://www.eventguide.in/ticket?bookingId=${booking.bookingId}`;
+    // 🔗 Ticket URL (IMPORTANT)
+    const ticketUrl = `https://www.eventguide.in/ticket?bookingId=${booking.bookingId}`;
 
-  // 🧾 Items
-  let itemsText = "";
-  if (booking.items && booking.items.length > 0) {
-    itemsText = booking.items
-      .map(
-        (item) =>
-          `• ${item.categoryName} x${item.quantity} - ₹${item.total}`
-      )
-      .join("\n");
-  }
+    // 🧾 Items
+    let itemsText = "";
+    if (booking.items && booking.items.length > 0) {
+      itemsText = booking.items
+        .map(
+          (item) =>
+            `• ${item.categoryName} x${item.quantity} - ₹${item.total}`
+        )
+        .join("\n");
+    }
 
-  const date = new Date(booking.bookingTime).toLocaleString();
+    const date = new Date(booking.bookingTime).toLocaleString();
 
-  // 💬 Final message (UPDATED)
-  const message = `🎉 *Booking Confirmed!*
+    // 💬 Final message (UPDATED)
+    const message = `🎉 *Booking Confirmed!*
 
 🆔 Booking ID: ${booking.bookingId}
 👤 Customer: ${booking.customerName}
@@ -153,10 +155,10 @@ ${ticketUrl}
 
 Thank you for booking!`;
 
-  const url = `https://wa.me/91${phone}?text=${encodeURIComponent(message)}`;
+    const url = `https://wa.me/91${phone}?text=${encodeURIComponent(message)}`;
 
-  window.location.href = url;
-};
+    window.location.href = url;
+  };
 
 
   // ================= OPEN MODAL =================
@@ -197,6 +199,35 @@ Thank you for booking!`;
         }
       );
       setUpiId(upiRes.data);
+
+
+      // ===== GST =====
+      const gstRes = await axios.get(
+        `https://event-management-api-production-94b1.up.railway.app/api/event-config/${eventId}/gst`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      setGstPercentage(gstRes.data || 0);
+
+
+
+      // ===== APP SERVICE =====
+      const serviceRes = await axios.get(
+        `https://event-management-api-production-94b1.up.railway.app/api/event-config/${eventId}/service-charge`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      setAppServiceCharge(
+        Number(serviceRes.data || 0)
+      );
 
       // ===== COUPONS =====
       const couponRes = await axios.get(
@@ -250,13 +281,38 @@ Thank you for booking!`;
   };
 
   // ================= DISCOUNT =================
+  // const getDiscountedTotal = () => {
+  //   const total = getTotalPrice();
+
+  //   if (!selectedCoupon) return total;
+
+  //   const discount = (total * selectedCoupon.discountPercentage) / 100;
+  //   return total - discount;
+  // };
+
+  const hasSelectedTickets = selectedTickets.some(
+    t => t.quantity > 0
+  );
+
   const getDiscountedTotal = () => {
-    const total = getTotalPrice();
 
-    if (!selectedCoupon) return total;
+    if (!hasSelectedTickets) {
+      return 0;
+    }
 
-    const discount = (total * selectedCoupon.discountPercentage) / 100;
-    return total - discount;
+    let total = getTotalPrice();
+
+    // coupon
+    if (selectedCoupon) {
+      const discount = (total * selectedCoupon.discountPercentage) / 100;
+      total -= discount;
+    }
+
+    // app service charge
+    total += appServiceCharge;
+    // gst
+    const gst = (total * gstPercentage) / 100;
+    return total + gst;
   };
 
   // ================= SELL API =================
@@ -271,6 +327,25 @@ Thank you for booking!`;
       customerPhone,
       couponCode,
       paymentMethod,
+      appServiceCharge,
+      gstAmount: (
+        (
+          getTotalPrice() -
+          (
+            selectedCoupon
+              ? (
+                getTotalPrice()
+                *
+                selectedCoupon.discountPercentage
+              ) / 100
+              : 0
+          )
+          +
+          appServiceCharge
+        )
+        *
+        gstPercentage
+      ) / 100,
       selections: selectedTickets.filter((t) => t.quantity > 0),
     };
 
@@ -290,16 +365,16 @@ Thank you for booking!`;
       setShowSuccessModal(true);
 
     } catch (err) {
-    console.error("Booking Error:", err);
+      console.error("Booking Error:", err);
 
-    const errorMessage =
-      err?.response?.data?.message ||   // backend message
-      err?.response?.data ||            // sometimes plain string
-      err.message ||                    // axios fallback
-      "Booking failed";
+      const errorMessage =
+        err?.response?.data?.message ||   // backend message
+        err?.response?.data ||            // sometimes plain string
+        err.message ||                    // axios fallback
+        "Booking failed";
 
-    toast.error(errorMessage);
-  }
+      toast.error(errorMessage);
+    }
   };
 
   // ================= UPI VALUE =================
@@ -431,15 +506,67 @@ Thank you for booking!`;
               ))}
             </div>
 
-            <div className="mt-3 font-bold">
+            {/* <div className="mt-3 font-bold">
               Total: ₹{getTotalPrice()}
-            </div>
+            </div> */}
 
-            {selectedCoupon && (
-              <div className="text-green-600 font-bold">
-                Discounted Price: ₹{getDiscountedTotal()}
+            {hasSelectedTickets && (
+              <div className="mt-3 border rounded p-3 space-y-1 text-sm">
+
+                <div>
+                  Ticket Amount:
+                  ₹{getTotalPrice()}
+                </div>
+
+                {selectedCoupon && (
+                  <div className="text-green-600">
+                    Discount:
+                    -₹{
+                      (
+                        getTotalPrice() *
+                        selectedCoupon.discountPercentage
+                      ) / 100
+                    }
+                  </div>
+                )}
+
+                <div>
+                  App Service:
+                  ₹{appServiceCharge}
+                </div>
+
+                <div>
+                  GST ({gstPercentage}%):
+                  ₹{
+                    (
+                      (
+                        (selectedCoupon
+                          ? getTotalPrice() -
+                          (
+                            getTotalPrice() *
+                            selectedCoupon.discountPercentage
+                          ) /
+                          100
+                          : getTotalPrice()) +
+                        appServiceCharge
+                      ) *
+                      gstPercentage
+                    ) /
+                    100
+                  }
+                </div>
+
+                <hr />
+
+                <div className="font-bold text-green-600 text-lg">
+                  Total:
+                  ₹{getDiscountedTotal().toFixed(2)}
+                </div>
+
               </div>
             )}
+
+
 
             <select
               className="border w-full p-2 mb-3"
