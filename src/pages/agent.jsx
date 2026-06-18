@@ -135,26 +135,32 @@ const Organizer = () => {
     }
 
     const date = new Date(booking.bookingTime).toLocaleString();
-
-    // 💬 Final message (UPDATED)
     const message = `🎉 *Booking Confirmed!*
 
-🆔 Booking ID: ${booking.bookingId}
-👤 Customer: ${booking.customerName}
+    🆔 Booking ID: ${booking.bookingId}
+    👤 Customer: ${booking.customerName}
 
-🎟️ Tickets:
-${itemsText}
+    🎟️ Tickets:
+    ${itemsText}
 
-💰 Total: ₹${booking.totalAmount}
-💳 Payment: ${booking.paymentStatus} (${booking.paymentMethod})
+    💵 Ticket Amount: ₹${booking.totalAmount}
 
-📅 Date: ${date}
+    ${booking.discount > 0 ? `🏷️ Discount: -₹${booking.discount}\n`: ""}
+    ${booking.appServiceCharge > 0 ? `🧾 App Service: ₹${booking.appServiceCharge}\n` : ""}
+    ${booking.gstAmount > 0 ? `📌 GST: ₹${booking.gstAmount}\n` : ""}
+    💰 Final Amount: ₹${booking.finalAmount}
 
-🎟️ View Ticket:
-${ticketUrl}
+    💳 Payment:
+     ${booking.paymentStatus}
+    (${booking.paymentMethod})
 
-Thank you for booking!`;
+    📅 Date:
+     ${date}
 
+    🎟️ View Ticket:
+     ${ticketUrl}
+
+    Thank you for booking!`;
     const url = `https://wa.me/91${phone}?text=${encodeURIComponent(message)}`;
 
     window.location.href = url;

@@ -136,11 +136,10 @@ function Ticket() {
             </span>
 
             <span
-              className={`font-semibold ${
-                booking.paymentStatus === "PAID"
+              className={`font-semibold ${booking.paymentStatus === "PAID"
                   ? "text-green-600"
                   : "text-red-500"
-              }`}
+                }`}
             >
               {booking.paymentStatus}
             </span>
@@ -215,6 +214,36 @@ function Ticket() {
                   ₹{booking.discount ?? 0}
                 </span>
               </div>
+
+              {/* APP SERVICE */}
+              {(booking.appServiceCharge ?? 0) > 0 && (
+                <div className="flex justify-between text-xs sm:text-sm">
+
+                  <span className="text-gray-500">
+                    App Service
+                  </span>
+
+                  <span className="font-semibold">
+                    ₹{booking.appServiceCharge}
+                  </span>
+
+                </div>
+              )}
+
+              {/* GST */}
+              {(booking.gstAmount ?? 0) > 0 && (
+                <div className="flex justify-between text-xs sm:text-sm">
+
+                  <span className="text-gray-500">
+                    GST
+                  </span>
+
+                  <span className="font-semibold">
+                    ₹{booking.gstAmount}
+                  </span>
+
+                </div>
+              )}
 
               {/* FINAL AMOUNT */}
               <div className="flex justify-between text-sm sm:text-base font-bold">
