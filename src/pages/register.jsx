@@ -49,7 +49,7 @@ export default function Register() {
         form
       );
 
-      navigate("/");
+      navigate("/login");
 
     } catch (err) {
       setError("Registration failed. Try again.");
@@ -79,7 +79,7 @@ export default function Register() {
           <input
             type="text"
             name="username"
-            placeholder="Username"
+            placeholder="Phone Number"
             className="w-full p-3 border rounded-lg"
             onChange={handleChange}
             value={form.username}

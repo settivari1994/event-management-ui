@@ -21,6 +21,12 @@ const EventSection = () => {
   const [selectedEventId, setSelectedEventId] = useState(null);
   const [upi, setUpi] = useState("");
 
+  const [serviceCharge, setServiceCharge] = useState("");
+  const [gstPercentage, setGstPercentage] = useState("");
+
+  const [showServiceChargeModal, setShowServiceChargeModal] = useState(false);
+  const [showGstModal, setShowGstModal] = useState(false);
+
   // Organisers
   const [organisers, setOrganisers] = useState([]);
   const [selectedOrganisers, setSelectedOrganisers] = useState([]);
@@ -115,6 +121,70 @@ const EventSection = () => {
     }
   };
 
+  const saveServiceCharge = async (eventId) => {
+    if (!serviceCharge) {
+      toast.error("Enter service charge");
+      return;
+    }
+    try {
+      await axios.post(
+        `https://event-management-api-production-94b1.up.railway.app/api/event-config/${eventId}/service-charge`,
+        {
+        serviceCharge: Number(serviceCharge)
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        }
+      );
+
+      toast.success("Service Charge Saved");
+      setShowServiceChargeModal(false);
+      setServiceCharge("");
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to save");
+    }
+
+  };
+
+
+  const saveGst = async (eventId) => {
+
+  if (!gstPercentage) {
+    toast.error("Select GST");
+    return;
+  }
+
+  try {
+
+    await axios.post(
+      `https://event-management-api-production-94b1.up.railway.app/api/event-config/${eventId}/gst`,
+       Number(gstPercentage),
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    toast.success("GST Charges Saved");
+    setShowGstModal(false);
+    setGstPercentage("");
+
+  } catch (err) {
+
+    console.log(err);
+
+    toast.error("Failed GST Save");
+
+  }
+
+};
+
   // ================= UPI =================
   const saveUpi = async () => {
     if (!upi.trim()) {
@@ -167,7 +237,7 @@ const EventSection = () => {
   const createCategory = async () => {
     const { name, price, totalQuantity } = categoryForm;
 
-    if (!name || !price || !totalQuantity ) {
+    if (!name || !price || !totalQuantity) {
       toast.error("All fields are required");
       return;
     }
@@ -224,7 +294,7 @@ const EventSection = () => {
   const saveCoupon = async () => {
     const { code, discountPercentage } = couponForm;
 
-    if (!code || !discountPercentage ) {
+    if (!code || !discountPercentage) {
       toast.error("All fields required");
       return;
     }
@@ -246,7 +316,7 @@ const EventSection = () => {
         toast.success("Coupon created");
       }
 
-      setCouponForm({ code: "", discountPercentage: ""});
+      setCouponForm({ code: "", discountPercentage: "" });
       setEditingCouponId(null);
       openCouponModal(couponEventId);
 
@@ -317,11 +387,19 @@ const EventSection = () => {
                     }}
                     className="block w-full text-left px-4 py-2 hover:bg-gray-100"
                   >
-                   Create Coupons
+                    Create Coupons
                   </button>
 
                   <button onClick={() => { setSelectedEventId(event.id); setShowUpiModal(true); setActiveMenu(null); }} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
-                   Configure UPI
+                    Configure UPI
+                  </button>
+
+                  <button onClick={() => { setSelectedEventId(event.id); setShowServiceChargeModal(true); setActiveMenu(null); }} className="block w-full text-left px-4 py-2 hover:bg-gray-100" >
+                    Assign Service Charges
+                  </button>
+
+                  <button onClick={() => { setSelectedEventId(event.id); setShowGstModal(true); setActiveMenu(null); }} className="block w-full text-left px-4 py-2 hover:bg-gray-100" >
+                    Assign GST Charges
                   </button>
 
                   <button onClick={() => { openAssignModal(event.id), setActiveMenu(null); }} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
@@ -407,6 +485,11 @@ const EventSection = () => {
           </div>
         </div>
       )}
+
+      {showServiceChargeModal && (<div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center"> <div className="bg-white p-5 rounded w-96 relative"> <button onClick={() => setShowServiceChargeModal(false)} className="absolute top-2 right-2" > <X /> </button> <h3 className="font-bold mb-3"> Service Charge </h3> <input type="number" value={serviceCharge} onChange={(e) => setServiceCharge(e.target.value)} className="border p-2 w-full" placeholder="Enter Service Charge" /> <button onClick={() => { saveServiceCharge(selectedEventId); }} className="bg-blue-600 text-white px-3 py-2 mt-3 w-full rounded" > Save </button> </div> </div>)}
+
+      {showGstModal && (<div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center"> <div className="bg-white p-5 rounded w-96 relative"> <button onClick={() => setShowGstModal(false)} className="absolute top-2 right-2" > <X /> </button> <h3 className="font-bold mb-3"> GST Configuration </h3> <select value={gstPercentage} onChange={(e) => setGstPercentage(e.target.value)} className="border p-2 w-full" > <option value=""> Select GST </option> <option value="18"> 18% </option> <option value="22"> 22% </option> <option value="24"> 24% </option> </select> <button onClick={() => { saveGst(selectedEventId); }} className="bg-green-600 text-white px-3 py-2 mt-3 w-full rounded" > Save GST </button> </div> </div>)}
+
 
       {/* ORGANISER MODAL */}
       {showAssignModal && (

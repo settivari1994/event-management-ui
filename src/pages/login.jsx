@@ -85,7 +85,7 @@ export default function Login() {
 
                     <input
                         type="text"
-                        placeholder="Username"
+                        placeholder="phone number"
                         className="w-full p-3 border rounded-lg"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
