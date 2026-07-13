@@ -8,6 +8,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TicketPage from "../src/pages/components/Ticket";
 import EventGuideLandingPage from "./pages/landingPage";
+import ValidateTicket from "./pages/ValidateTicket";
 
 
 
@@ -58,6 +59,8 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route path="/validate-ticket/:eventId" element={<ValidateTicket />}/>
 
         <Route path="*" element={<Navigate to="/" replace />} />
 

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import logo from "../assets/logo.png";
 
 export default function EventGuideLandingPage() {
   const services = [
@@ -71,24 +72,12 @@ const clients = [
           <div className="flex items-center justify-between h-20">
 
             {/* LOGO */}
-            <div className="flex items-center gap-3">
-
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center shadow-md">
-                <span className="text-white text-lg sm:text-xl font-bold">
-                  EG
-                </span>
-              </div>
-
-              <div>
-                <h1 className="text-lg sm:text-2xl font-bold text-blue-600 leading-none">
-                  EventGuide
-                </h1>
-
-                <p className="text-[10px] sm:text-xs text-gray-500 mt-1">
-                  Pvt Ltd
-                </p>
-              </div>
-
+            <div className="flex items-center">
+              <img
+                src={logo}
+                alt="EventGuide Sports & Live Events"
+                className="h-12 sm:h-14 md:h-16 lg:h-20 w-auto object-contain"
+              />
             </div>
 
             {/* NAVIGATION */}
@@ -125,13 +114,6 @@ const clients = [
               >
                 Login
               </Link>
-
-              <a
-                href="#contact"
-                className="px-3 sm:px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition text-xs sm:text-sm whitespace-nowrap"
-              >
-                Book Consultation
-              </a>
 
             </div>
 

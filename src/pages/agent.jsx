@@ -145,7 +145,7 @@ const Organizer = () => {
 
     💵 Ticket Amount: ₹${booking.totalAmount}
 
-    ${booking.discount > 0 ? `🏷️ Discount: -₹${booking.discount}\n`: ""}
+    ${booking.discount > 0 ? `🏷️ Discount: -₹${booking.discount}\n` : ""}
     ${booking.appServiceCharge > 0 ? `🧾 App Service: ₹${booking.appServiceCharge}\n` : ""}
     ${booking.gstAmount > 0 ? `📌 GST: ₹${booking.gstAmount}\n` : ""}
     💰 Final Amount: ₹${booking.finalAmount}
@@ -427,12 +427,23 @@ const Organizer = () => {
               {event.eventDescription}
             </p>
 
-            <button
-              onClick={() => openSellModal(event.id)}
-              className="mt-4 bg-green-600 text-white px-3 py-2 rounded"
-            >
-              Sell Tickets
-            </button>
+            <div className="mt-4 flex gap-3">
+
+              <button
+                onClick={() => openSellModal(event.id)}
+                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+              >
+                Sell Tickets
+              </button>
+
+              <button
+                onClick={() => navigate(`/validate-ticket/${event.id}`)}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+              >
+                Validate Ticket
+              </button>
+
+            </div>
           </div>
         ))}
       </div>
