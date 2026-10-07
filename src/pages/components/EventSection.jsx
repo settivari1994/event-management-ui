@@ -15,6 +15,7 @@ const EventSection = () => {
   const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null);
+  const [activeTab, setActiveTab] = useState("events");
 
   // UPI
   const [showUpiModal, setShowUpiModal] = useState(false);
@@ -74,6 +75,20 @@ const EventSection = () => {
     fetchEvents();
   }, []);
 
+  const upcomingEvents = events.filter((event) => {
+    if (!event.eventDate) return true;
+
+    return new Date(event.eventDate).getTime() >= Date.now();
+  });
+
+  const pastEvents = events.filter((event) => {
+    if (!event.eventDate) return false;
+
+    return new Date(event.eventDate).getTime() < Date.now();
+  });
+
+  const displayedEvents = activeTab === "past" ? pastEvents : upcomingEvents;
+
   // ================= ORGANISERS =================
   const fetchOrganisers = async () => {
     try {
@@ -130,7 +145,7 @@ const EventSection = () => {
       await axios.post(
         `https://event-management-api-production-94b1.up.railway.app/api/event-config/${eventId}/service-charge`,
         {
-        serviceCharge: Number(serviceCharge)
+          serviceCharge: Number(serviceCharge)
         },
         {
           headers: {
@@ -153,37 +168,37 @@ const EventSection = () => {
 
   const saveGst = async (eventId) => {
 
-  if (!gstPercentage) {
-    toast.error("Select GST");
-    return;
-  }
+    if (!gstPercentage) {
+      toast.error("Select GST");
+      return;
+    }
 
-  try {
+    try {
 
-    await axios.post(
-      `https://event-management-api-production-94b1.up.railway.app/api/event-config/${eventId}/gst`,
-       Number(gstPercentage),
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json"
+      await axios.post(
+        `https://event-management-api-production-94b1.up.railway.app/api/event-config/${eventId}/gst`,
+        Number(gstPercentage),
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json"
+          }
         }
-      }
-    );
+      );
 
-    toast.success("GST Charges Saved");
-    setShowGstModal(false);
-    setGstPercentage("");
+      toast.success("GST Charges Saved");
+      setShowGstModal(false);
+      setGstPercentage("");
 
-  } catch (err) {
+    } catch (err) {
 
-    console.log(err);
+      console.log(err);
 
-    toast.error("Failed GST Save");
+      toast.error("Failed GST Save");
 
-  }
+    }
 
-};
+  };
 
   // ================= UPI =================
   const saveUpi = async () => {
@@ -354,7 +369,7 @@ const EventSection = () => {
   return (
     <div className="p-4">
 
-      <div className="flex justify-between mb-6">
+      <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold">Events</h2>
 
         <button
@@ -365,9 +380,34 @@ const EventSection = () => {
         </button>
       </div>
 
+      {/* EVENT TABS */}
+      <div className="flex gap-8 border-b mb-6">
+
+        <button
+          onClick={() => setActiveTab("events")}
+          className={`pb-3 px-2 font-semibold transition ${activeTab === "events"
+              ? "text-blue-600 border-b-2 border-blue-600"
+              : "text-gray-500 hover:text-gray-700"
+            }`}
+        >
+          Events ({upcomingEvents.length})
+        </button>
+
+        <button
+          onClick={() => setActiveTab("past")}
+          className={`pb-3 px-2 font-semibold transition ${activeTab === "past"
+              ? "text-blue-600 border-b-2 border-blue-600"
+              : "text-gray-500 hover:text-gray-700"
+            }`}
+        >
+          Past Events ({pastEvents.length})
+        </button>
+
+      </div>
+
       <div className="grid md:grid-cols-3 gap-5">
 
-        {events.map((event) => (
+        {displayedEvents.map((event) => (
           <div key={event.id} className="shadow-lg p-4 rounded-xl bg-white relative">
 
             <div className="absolute top-2 right-2">
@@ -429,8 +469,25 @@ const EventSection = () => {
               <FileText size={16} /> {event.eventDescription}
             </p>
 
+            {event.createdBy && (
+              <p className="text-sm text-gray-500 mt-1">
+                Created by:{" "}
+                <span className="font-medium text-gray-700">
+                  {event.createdBy.name}
+                </span>
+              </p>
+            )}
+
           </div>
         ))}
+
+        {displayedEvents.length === 0 && (
+          <div className="col-span-full text-center py-12 text-gray-500">
+            {activeTab === "past"
+              ? "No past events found."
+              : "No upcoming events found."}
+          </div>
+        )}
 
       </div>
 

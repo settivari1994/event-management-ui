@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 
 const Organizer = () => {
   const [events, setEvents] = useState([]);
+  const [activeTab, setActiveTab] = useState("events");
   const navigate = useNavigate();
 
   // ===== SELL MODAL =====
@@ -60,6 +61,20 @@ const Organizer = () => {
   useEffect(() => {
     fetchAssignedEvents();
   }, []);
+
+  const upcomingEvents = events.filter((event) => {
+    if (!event.eventDate) return true;
+
+    return new Date(event.eventDate).getTime() >= Date.now();
+  });
+
+  const pastEvents = events.filter((event) => {
+    if (!event.eventDate) return false;
+
+    return new Date(event.eventDate).getTime() < Date.now();
+  });
+
+  const displayedEvents = activeTab === "past" ? pastEvents : upcomingEvents;
 
   // ================= LOGOUT =================
   const handleLogout = () => {
@@ -406,8 +421,36 @@ const Organizer = () => {
       </div>
 
       {/* EVENTS */}
+      {/* EVENTS */}
+
+      <div className="bg-white p-4 rounded-xl shadow mb-6">
+        <div className="flex gap-8 border-b">
+
+          <button
+            onClick={() => setActiveTab("events")}
+            className={`pb-3 px-2 font-semibold ${activeTab === "events"
+                ? "text-blue-600 border-b-2 border-blue-600"
+                : "text-gray-500 hover:text-gray-700"
+              }`}
+          >
+            Events ({upcomingEvents.length})
+          </button>
+
+          <button
+            onClick={() => setActiveTab("past")}
+            className={`pb-3 px-2 font-semibold ${activeTab === "past"
+                ? "text-blue-600 border-b-2 border-blue-600"
+                : "text-gray-500 hover:text-gray-700"
+              }`}
+          >
+            Past Events ({pastEvents.length})
+          </button>
+
+        </div>
+      </div>
+
       <div className="grid md:grid-cols-3 gap-6">
-        {events.map((event) => (
+        {displayedEvents.map((event) => (
           <div key={event.id} className="bg-white p-5 rounded shadow">
 
             <h2 className="text-xl font-bold">{event.eventName}</h2>
@@ -429,12 +472,21 @@ const Organizer = () => {
 
             <div className="mt-4 flex gap-3">
 
-              <button
-                onClick={() => openSellModal(event.id)}
-                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
-              >
-                Sell Tickets
-              </button>
+              {activeTab === "events" ? (
+                <button
+                  onClick={() => openSellModal(event.id)}
+                  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+                >
+                  Sell Tickets
+                </button>
+              ) : (
+                <button
+                  disabled
+                  className="bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed"
+                >
+                  Event Completed
+                </button>
+              )}
 
               <button
                 onClick={() => navigate(`/validate-ticket/${event.id}`)}
