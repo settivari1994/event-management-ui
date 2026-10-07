@@ -113,7 +113,7 @@ export default function Login() {
 
                     <div className="text-center mt-4">
                         <p className="text-sm">
-                            Don’t have an account?
+                            Don’t have agent login?
                             <Link
                                 to="/register"
                                 className="text-blue-600 ml-1 font-semibold"
@@ -121,6 +121,7 @@ export default function Login() {
                                 Register
                             </Link>
                         </p>
+                        <p className="text-sm">For Admin Login, Contact EventGuide team</p>
                     </div>
 
                 </form>

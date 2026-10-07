@@ -101,7 +101,7 @@ export default function Register() {
             value={form.role}
           >
             <option value="SELECT">SELECT ROLE</option>
-            <option value="ORGANIZER">ORGANIZER</option>
+            <option value="ORGANIZER">Agent</option>
           </select>
 
           <button
@@ -119,7 +119,7 @@ export default function Register() {
         </form>
 
         <p className="text-sm text-center mt-4">
-          Already have an account?
+          Already have an agent account?
           <Link to="/" className="text-blue-600 ml-1 font-semibold">
             Login
           </Link>
