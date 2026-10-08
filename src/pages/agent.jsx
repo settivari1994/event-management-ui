@@ -315,26 +315,50 @@ const Organizer = () => {
     t => t.quantity > 0
   );
 
+  // const getDiscountedTotal = () => {
+
+  //   if (!hasSelectedTickets) {
+  //     return 0;
+  //   }
+
+  //   let total = getTotalPrice();
+
+  //   // coupon
+  //   if (selectedCoupon) {
+  //     const discount = (total * selectedCoupon.discountPercentage) / 100;
+  //     total -= discount;
+  //   }
+
+  //   // app service charge
+  //   total += appServiceCharge;
+  //   // gst
+  //   const gst = (total * gstPercentage) / 100;
+  //   return total + gst;
+  // };
+
   const getDiscountedTotal = () => {
 
-    if (!hasSelectedTickets) {
-      return 0;
-    }
+  if (!hasSelectedTickets) {
+    return 0;
+  }
 
-    let total = getTotalPrice();
+  let ticketAmount = getTotalPrice();
 
-    // coupon
-    if (selectedCoupon) {
-      const discount = (total * selectedCoupon.discountPercentage) / 100;
-      total -= discount;
-    }
+  // Coupon discount
+  if (selectedCoupon) {
+    const discount =
+      (ticketAmount * selectedCoupon.discountPercentage) / 100;
 
-    // app service charge
-    total += appServiceCharge;
-    // gst
-    const gst = (total * gstPercentage) / 100;
-    return total + gst;
-  };
+    ticketAmount -= discount;
+  }
+
+  // GST ONLY on app service charge
+  const gst =
+    (appServiceCharge * gstPercentage) / 100;
+
+  // Final amount
+  return ticketAmount + appServiceCharge + gst;
+};
 
   // ================= SELL API =================
   const handleSellTickets = async () => {
@@ -349,24 +373,7 @@ const Organizer = () => {
       couponCode,
       paymentMethod,
       appServiceCharge,
-      gstAmount: (
-        (
-          getTotalPrice() -
-          (
-            selectedCoupon
-              ? (
-                getTotalPrice()
-                *
-                selectedCoupon.discountPercentage
-              ) / 100
-              : 0
-          )
-          +
-          appServiceCharge
-        )
-        *
-        gstPercentage
-      ) / 100,
+    gstAmount: (appServiceCharge * gstPercentage) / 100,
       selections: selectedTickets.filter((t) => t.quantity > 0),
     };
 
@@ -604,26 +611,10 @@ const Organizer = () => {
                   ₹{appServiceCharge}
                 </div>
 
-                <div>
-                  GST ({gstPercentage}%):
-                  ₹{
-                    (
-                      (
-                        (selectedCoupon
-                          ? getTotalPrice() -
-                          (
-                            getTotalPrice() *
-                            selectedCoupon.discountPercentage
-                          ) /
-                          100
-                          : getTotalPrice()) +
-                        appServiceCharge
-                      ) *
-                      gstPercentage
-                    ) /
-                    100
-                  }
-                </div>
+               <div>
+                GST ({gstPercentage}%):
+                ₹{((appServiceCharge * gstPercentage) / 100).toFixed(2)}
+              </div>
 
                 <hr />
 
