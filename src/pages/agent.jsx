@@ -35,8 +35,7 @@ const Organizer = () => {
   // ===== UPI ID =====
   const [upiId, setUpiId] = useState("");
   const [gstPercentage, setGstPercentage] = useState(0);
-  const [appServiceCharge, setAppServiceCharge] = useState(0);
-
+  const [serviceChargePercentage, setServiceChargePercentage] = useState(0);
   // ===== SUCCESS MODAL =====
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [bookingData, setBookingData] = useState(null);
@@ -246,9 +245,9 @@ const Organizer = () => {
         }
       );
 
-      setAppServiceCharge(
+     setServiceChargePercentage(
         Number(serviceRes.data || 0)
-      );
+    );
 
       // ===== COUPONS =====
       const couponRes = await axios.get(
@@ -336,8 +335,7 @@ const Organizer = () => {
   //   return total + gst;
   // };
 
-  const getDiscountedTotal = () => {
-
+const getDiscountedTotal = () => {
   if (!hasSelectedTickets) {
     return 0;
   }
@@ -352,58 +350,80 @@ const Organizer = () => {
     ticketAmount -= discount;
   }
 
-  // GST ONLY on app service charge
-  const gst =
-    (appServiceCharge * gstPercentage) / 100;
+  // Service charge = percentage of discounted ticket amount
+  const serviceChargeAmount =
+    (ticketAmount * serviceChargePercentage) / 100;
 
-  // Final amount
-  return ticketAmount + appServiceCharge + gst;
+  // GST ONLY on service charge
+  const gstAmount =
+    (serviceChargeAmount * gstPercentage) / 100;
+
+  return ticketAmount + serviceChargeAmount + gstAmount;
 };
 
   // ================= SELL API =================
-  const handleSellTickets = async () => {
-    if (!customerName || !customerPhone) {
-      toast.error("Customer details required");
-      return;
-    }
+const handleSellTickets = async () => {
+  if (!customerName || !customerPhone) {
+    toast.error("Customer details required");
+    return;
+  }
 
-    const payload = {
-      customerName,
-      customerPhone,
-      couponCode,
-      paymentMethod,
-      appServiceCharge,
-    gstAmount: (appServiceCharge * gstPercentage) / 100,
-      selections: selectedTickets.filter((t) => t.quantity > 0),
-    };
+  const ticketAmountAfterDiscount =
+    getTotalPrice() -
+    (
+      selectedCoupon
+        ? (
+            getTotalPrice() *
+            selectedCoupon.discountPercentage
+          ) / 100
+        : 0
+    );
 
-    try {
-      const res = await axios.post(
-        "https://event-management-api-production-94b1.up.railway.app/api/bookings",
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+  const serviceChargeAmount =
+    (ticketAmountAfterDiscount * serviceChargePercentage) / 100;
 
-      setBookingData(res.data);
-      setShowSellModal(false);
-      setShowSuccessModal(true);
+  const gstAmount =
+    (serviceChargeAmount * gstPercentage) / 100;
 
-    } catch (err) {
-      console.error("Booking Error:", err);
+  const payload = {
+    customerName,
+    customerPhone,
+    couponCode,
+    paymentMethod,
 
-      const errorMessage =
-        err?.response?.data?.message ||   // backend message
-        err?.response?.data ||            // sometimes plain string
-        err.message ||                    // axios fallback
-        "Booking failed";
+    appServiceCharge: serviceChargeAmount,
 
-      toast.error(errorMessage);
-    }
+    gstAmount: gstAmount,
+
+    selections: selectedTickets.filter(
+      (t) => t.quantity > 0
+    ),
   };
+
+  try {
+    const res = await axios.post(
+      "https://event-management-api-production-94b1.up.railway.app/api/bookings",
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    setBookingData(res.data);
+    setShowSellModal(false);
+    setShowSuccessModal(true);
+
+  } catch (err) {
+    console.log(err);
+
+    toast.error(
+      err.response?.data?.message ||
+      "Booking failed"
+    );
+  }
+};
 
   // ================= UPI VALUE =================
   const getUpiValue = () => {
@@ -606,15 +626,44 @@ const Organizer = () => {
                   </div>
                 )}
 
-                <div>
-                  App Service:
-                  ₹{appServiceCharge}
-                </div>
+              <div>
+  App Service ({serviceChargePercentage}%):
+  ₹{
+    (
+      (
+        selectedCoupon
+          ? getTotalPrice() -
+            (
+              getTotalPrice() *
+              selectedCoupon.discountPercentage
+            ) / 100
+          : getTotalPrice()
+      ) *
+      serviceChargePercentage
+    ) / 100
+  }
+</div>
 
-               <div>
-                GST ({gstPercentage}%):
-                ₹{((appServiceCharge * gstPercentage) / 100).toFixed(2)}
-              </div>
+              <div>
+  GST ({gstPercentage}%):
+  ₹{
+    (
+      (
+        (
+          selectedCoupon
+            ? getTotalPrice() -
+              (
+                getTotalPrice() *
+                selectedCoupon.discountPercentage
+              ) / 100
+            : getTotalPrice()
+        ) *
+        serviceChargePercentage
+      ) / 100 *
+      gstPercentage
+    ) / 100
+  }
+</div>
 
                 <hr />
 
