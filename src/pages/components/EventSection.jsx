@@ -148,7 +148,7 @@ const EventSection = () => {
       await axios.post(
         `https://event-management-api-production-94b1.up.railway.app/api/event-config/${eventId}/service-charge`,
         {
-          serviceChargePercentage: Number(serviceCharge)
+          "percentage": Number(serviceCharge)
         },
         {
           headers: {
