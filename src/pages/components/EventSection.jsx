@@ -45,6 +45,9 @@ const EventSection = () => {
     totalQuantity: "",
   });
 
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [editQuantity, setEditQuantity] = useState("");
+
   // Coupons
   const [showCouponModal, setShowCouponModal] = useState(false);
   const [couponEventId, setCouponEventId] = useState(null);
@@ -282,6 +285,56 @@ const EventSection = () => {
     }
   };
 
+// UPDATE CATEGORY QUANTITY
+const updateCategoryQuantity = async () => {
+  if (!editingCategory) {
+    toast.error("No category selected");
+    return;
+  }
+
+  if (!editQuantity || Number(editQuantity) <= 0) {
+    toast.error("Enter a valid quantity");
+    return;
+  }
+
+  const additionalQuantity = Number(editQuantity);
+
+  // Current total + additional quantity
+  const newTotalQuantity =
+    Number(editingCategory.totalQuantity) + additionalQuantity;
+
+  try {
+    await axios.put(
+      `https://event-management-api-production-94b1.up.railway.app/api/admin/events/${categoryEventId}/categories/${editingCategory.id}`,
+      {
+        totalQuantity: newTotalQuantity
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      }
+    );
+
+    toast.success("Ticket quantity updated");
+
+    // Close popup
+    setEditingCategory(null);
+    setEditQuantity("");
+
+    // Refresh categories
+    await openCategoryModal(categoryEventId);
+
+  } catch (err) {
+    console.log(err);
+
+    toast.error(
+      err.response?.data?.message ||
+      "Failed to update ticket quantity"
+    );
+  }
+};
+
   // ================= COUPON =================
   const openCouponModal = async (eventId) => {
     setCouponEventId(eventId);
@@ -515,16 +568,121 @@ const EventSection = () => {
               Create Category
             </button>
 
-            <div className="mt-4 max-h-40 overflow-auto">
-              {categories.map((c) => (
-                <div key={c.id} className="border p-2 mt-2 rounded">
-                  {c.name} - ₹{c.price}
-                </div>
-              ))}
-            </div>
+          <div className="mt-4 max-h-60 overflow-auto">
+  {categories.map((c) => (
+    <div
+      key={c.id}
+      className="border p-3 mt-2 rounded-lg"
+    >
+      <div className="flex justify-between items-start">
+        <div>
+          <p className="font-semibold capitalize">
+            {c.name}
+          </p>
+
+          <p className="text-sm text-gray-600">
+            Price: ₹{c.price}
+          </p>
+
+          <p className="text-sm text-gray-600">
+            Total: {c.totalQuantity}
+          </p>
+
+          <p className="text-sm text-green-600 font-medium">
+            Available: {c.remainingQuantity}
+          </p>
+        </div>
+
+        <button
+          onClick={() => {
+            setEditingCategory(c);
+            setEditQuantity("");
+          }}
+          disabled={!c.active}
+          className={`px-3 py-1 rounded text-sm ${
+            c.active
+              ? "bg-blue-600 text-white hover:bg-blue-700"
+              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+          }`}
+        >
+          Add Quantity
+        </button>
+      </div>
+    </div>
+  ))}
+</div>
           </div>
         </div>
       )}
+
+      
+
+      {editingCategory && (
+  <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div className="bg-white p-5 rounded-lg w-96 relative shadow-xl">
+
+      <button
+        onClick={() => {
+          setEditingCategory(null);
+          setEditQuantity("");
+        }}
+        className="absolute top-2 right-2"
+      >
+        <X />
+      </button>
+
+      <h3 className="font-bold text-lg mb-4">
+        Add Ticket Quantity
+      </h3>
+
+      <p className="mb-1">
+        Category:{" "}
+        <span className="font-semibold capitalize">
+          {editingCategory.name}
+        </span>
+      </p>
+
+      <p className="text-sm text-gray-600">
+        Current Total: {editingCategory.totalQuantity}
+      </p>
+
+      <p className="text-sm text-green-600 mb-4">
+        Available: {editingCategory.remainingQuantity}
+      </p>
+
+      <input
+        type="number"
+        min="1"
+        value={editQuantity}
+        onChange={(e) => setEditQuantity(e.target.value)}
+        placeholder="Enter additional quantity"
+        className="border p-2 w-full rounded mb-4"
+      />
+
+      <div className="flex justify-end gap-2">
+
+        <button
+          onClick={() => {
+            setEditingCategory(null);
+            setEditQuantity("");
+          }}
+          className="px-4 py-2 border rounded"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={updateCategoryQuantity}
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          Add Quantity
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+)}
 
       {/* UPI MODAL */}
       {showUpiModal && (
