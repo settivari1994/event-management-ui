@@ -5,6 +5,8 @@ import { useNavigate, Link } from "react-router-dom";
 export default function Register() {
 
   const [form, setForm] = useState({
+    name: "",
+    email: "",
     username: "",
     password: "",
     role: "SELECT"
@@ -30,9 +32,13 @@ export default function Register() {
 
     setError("");
 
-    // ✅ Basic validation
-    if (!form.username || !form.password) {
-      setError("All fields are required");
+    // Name, phone number and password are mandatory
+    if (
+      !form.name?.trim() ||
+      !form.username?.trim() ||
+      !form.password
+    ) {
+      setError("Name, phone number and password are required");
       return;
     }
 
@@ -46,17 +52,25 @@ export default function Register() {
     try {
       await axios.post(
         "https://event-management-api-production-94b1.up.railway.app/auth/register",
-        form
+        {
+          ...form,
+          name: form.name.trim(),
+          email: form.email?.trim() || null,
+        }
       );
 
       navigate("/login");
-
     } catch (err) {
-      setError("Registration failed. Try again.");
+      setError(
+        err.response?.data?.message ||
+        "Registration failed. Try again."
+      );
     } finally {
       setLoading(false);
     }
   };
+
+
 
   return (
     <div className="h-screen flex items-center justify-center bg-gray-100">
@@ -75,6 +89,9 @@ export default function Register() {
               {error}
             </div>
           )}
+
+          <input type="text" name="name" placeholder="Full Name *" className="w-full p-3 border rounded-lg" value={form.name} onChange={handleChange} />
+          <input type="email" name="email" placeholder="Email Address (Optional)" className="w-full p-3 border rounded-lg" value={form.email} onChange={handleChange} />
 
           <input
             type="text"
@@ -107,11 +124,10 @@ export default function Register() {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full p-3 rounded-lg text-white ${
-              loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-green-600 hover:bg-green-700"
-            }`}
+            className={`w-full p-3 rounded-lg text-white ${loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-green-600 hover:bg-green-700"
+              }`}
           >
             {loading ? "Registering..." : "Register"}
           </button>
