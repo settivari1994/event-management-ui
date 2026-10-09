@@ -224,7 +224,7 @@ function Ticket() {
                   </span>
 
                   <span className="font-semibold">
-                    ₹{booking.appServiceCharge}
+                    {booking.appServiceCharge}%
                   </span>
 
                 </div>
