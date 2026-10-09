@@ -496,7 +496,7 @@ const updateCategoryQuantity = async () => {
                   </button>
 
                   <button onClick={() => { openAssignModal(event.id), setActiveMenu(null); }} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
-                    Assign Organisers
+                    Assign Agents
                   </button>
 
                   <button onClick={() => { openCategoryModal(event.id), setActiveMenu(null); }} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
